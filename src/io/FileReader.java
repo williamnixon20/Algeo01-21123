@@ -1,11 +1,13 @@
 package io;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 import matrix.Matrix;
+import point.Points;
 
 public class FileReader {
   private String fileName = "defaultMatrix.txt";
@@ -16,7 +18,6 @@ public class FileReader {
 
   public boolean setFileName(Scanner scanner) {
     System.out.print("Masukkan nama file: ");
-    System.out.println(cwd);
     String fileName = scanner.next();
 
     /**
@@ -47,7 +48,7 @@ public class FileReader {
      */
     ArrayList<ArrayList<Double>> arr = new ArrayList<ArrayList<Double>>();
     boolean isDataValid = true;
-    File file = new File(cwd);
+    File file = new File(this.cwd);
     Scanner scanner = new Scanner(file);
     int lastRowLength = -1;
 
@@ -95,5 +96,48 @@ public class FileReader {
     }
 
     return m;
+  }
+
+  public Points readPoints(String type) throws FileNotFoundException {
+    ArrayList<ArrayList<Double>> arrOfPoints = new ArrayList<ArrayList<Double>>();
+    boolean isDataValid = true;
+    File file = new File(this.cwd);
+    Scanner scanner = new Scanner(file);
+
+    while (isDataValid && scanner.hasNextLine()) {
+      ArrayList<Double> tempArr = new ArrayList<Double>();
+      String input = scanner.nextLine();
+      String[] arrOfInput = input.split(" ", -2);
+
+      if (arrOfInput.length != 2) {
+        System.out.println("Harap masukkan data yang valid.");
+        isDataValid = false;
+        break;
+      }
+
+      for (int i = 0; i < arrOfInput.length; i++) {
+        try {
+          tempArr.add(Double.parseDouble(arrOfInput[i]));
+        } catch (NumberFormatException e) {
+          System.out.println("Harap masukkan data yang valid.");
+          isDataValid = false;
+          break;
+        }
+      }
+      arrOfPoints.add(tempArr);
+    }
+
+    int rowSize = arrOfPoints.size();
+    Points p = new Points(rowSize, type, false, scanner);
+
+    if (isDataValid) {
+      p.changePointsValidty(true);
+      for (int i = 0; i < p.getRowEff(); i++) {
+        p.setPointsElement(i, 0, arrOfPoints.get(i).get(0));
+        p.setPointsElement(i, 1, arrOfPoints.get(i).get(1));
+      }
+    }
+
+    return p;
   }
 }
