@@ -33,7 +33,13 @@ public class Interface {
             int menuChoice = this.mainMenu();
             switch (menuChoice) {
                 case 1:
-                    Matrix baru = new Matrix(3, 3, true, scanner);
+                    int row, col;
+                    System.out.print("Masukkan panjang baris: ");
+                    row = this.scanner.nextInt();
+                    System.out.print("Masukkan panjang kolom: ");
+                    col = this.scanner.nextShort();
+
+                    Matrix baru = new Matrix(row, col, true, scanner);
                     baru.readMatrix();
                     baru.writeMatrix();
                     break;
