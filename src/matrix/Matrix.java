@@ -213,4 +213,18 @@ public class Matrix {
     }
   }
 
+  public void toRREF() {
+    toREF();
+    for (int row = getRowLastIdx(); row > 0; row--) {
+      int curLead = getLeadingCoeffIdx(row);
+      if (curLead < MAX_DIMENSION) {
+        for (int xrow = row - 1; xrow >= 0; xrow--) {
+          if (this.mat[xrow][curLead] != 0) {
+            double multiplier = (-1) * this.mat[xrow][curLead] / this.mat[row][curLead];
+            doRowOperation(row, xrow, multiplier);
+          }
+        }
+      }
+    }
+  }
 }
