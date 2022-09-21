@@ -213,6 +213,9 @@ public class Matrix {
     }
   }
 
+  /**
+   * Mengubah matriks menjadi bentuk Eselon Baris Tereduksi
+   */
   public void toRREF() {
     toREF();
     for (int row = getRowLastIdx(); row > 0; row--) {
@@ -225,6 +228,49 @@ public class Matrix {
           }
         }
       }
+    }
+  }
+
+  /**
+   * 
+   * @param refRow baris yang akan dihilangkan dalam perhitungan
+   * @param refCol kolom yang akan dihilangkan dalam perhitungan
+   * @return kofaktor dari refRow dan refCol
+   */
+  public double getCofactor(int refRow, int refCol) {
+    Scanner scanner = new Scanner(System.in);
+    Matrix m = new Matrix(getRowLength() - 1, getColLength() - 1, true, scanner);
+
+    for (int row = 0; row <= m.getRowLastIdx(); row++) {
+      for (int col = 0; col <= m.getColLastIdx(); col++) {
+        m.setMatrixElement(row, col, this.mat[row + (row >= refRow ? 1 : 0)][col + (col >= refCol ? 1 : 0)]);
+      }
+    }
+
+    if ((refRow + refCol) % 2 == 0) {
+      return m.getDetWithCofactor();
+    } else {
+      return (-1) * m.getDetWithCofactor();
+    }
+  }
+
+  /**
+   * 
+   * @return determinan Matriks dengan metode kofaktor
+   */
+  public double getDetWithCofactor() {
+    double det = 0;
+    int row = 0;
+    if (getRowLength() == 1) {
+      return this.mat[0][0];
+    } else if (getRowLength() == 2) {
+      return ((this.mat[0][0] * this.mat[1][1]) - (this.mat[0][1] * this.mat[1][0]));
+    } else {
+      for (int col = 0; col <= getColLastIdx(); col++) {
+        det += this.mat[row][col] * getCofactor(row, col);
+      }
+
+      return det;
     }
   }
 }

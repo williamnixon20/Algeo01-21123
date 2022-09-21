@@ -42,6 +42,7 @@ public class Interface {
                     Matrix baru = new Matrix(row, col, true, scanner);
                     baru.readMatrix();
                     baru.writeMatrix();
+                    System.out.printf("Determinan matriks: %.2f\n", baru.getDetWithCofactor());
                     System.out.println("Matriks dalam bentuk baris eselon tereduksi:");
                     baru.toRREF();
                     baru.writeMatrix();
