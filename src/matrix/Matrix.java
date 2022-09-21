@@ -4,7 +4,9 @@ import java.util.*;
 import matrix.coordinate.*;
 
 public class Matrix {
-  static final int MAX_DIMENSION = 1000;
+  public int MAX_DIMENSION = 1000;
+  public double VAL_UNDEF = -99999999;
+  public double EPSILON_IMPRECISION = 0.0000001;
   /**
    * private artinya tidak bisa diakses dari luar
    * segala interaksi dengan field harus dilakukan dengan fungsi di kelas matriks
@@ -20,6 +22,7 @@ public class Matrix {
    * 
    * @param row     Dimensi baris yang ingin dimiliki matriks
    * @param col     Dimensi kolom yang ingin dimiliki matriks
+   * @param isValid 
    * @param scanner Scanner u/matriks
    */
   public Matrix(int row, int col, boolean isValid, Scanner scanner) {
@@ -61,15 +64,30 @@ public class Matrix {
   }
 
   /**
-   * 
    * Menimpa element pada index [row][col] dengan value
+   * @param row
+   * @param col
+   * @param value
    */
   public void setMatrixElement(int row, int col, double value) {
     this.mat[row][col] = value;
   }
 
+  /**
+   * Menimpa element pada index [row][col] dengan value
+   * @param row
+   * @param col
+   */
+  public double getMatrixElement(int row, int col) {
+    return this.mat[row][col];
+  }
+
   public void changeMatrixValidity(boolean isValid) {
     this.isValid = isValid;
+  }
+
+  public boolean isSquare() {
+    return getColLength() == getRowLength();
   }
 
   /**
@@ -83,7 +101,6 @@ public class Matrix {
       }
     }
   }
-
   /**
    * Menulis matriks ke layar
    */
@@ -91,15 +108,27 @@ public class Matrix {
     if (this.isValid) {
       for (int i = 0; i < getRowLength(); i++) {
         for (int j = 0; j < this.colEff; j++) {
+          /** Mencegah adanya -0 dan 0 akibat doubleing point imprecision */
           double val = this.mat[i][j];
-          if (val > -0.0001 && val < 0) {
-            val = 0;
+          if (val > (-this.EPSILON_IMPRECISION) && val < this.EPSILON_IMPRECISION) {
+            val = this.EPSILON_IMPRECISION;
           }
-          System.out.printf("%.2f ", val);
+          System.out.printf("%.2f ", val, val);
         }
         System.out.print("\n");
       }
     }
+  }
+
+  public Matrix copyMatrix() {
+    Matrix baru = new Matrix(this.rowEff, this.colEff, true, this.scanner);
+    for (int i = 0; i < this.rowEff; i++) {
+      for (int j = 0; j < this.colEff; j++) {
+        baru.setMatrixElement(i, j, this.mat[i][j]);
+      }
+    }
+    baru.writeMatrix();
+    return baru;
   }
 
   /**
@@ -184,9 +213,7 @@ public class Matrix {
     return pivot;
   }
 
-  /**
-   * Mengubah matriks menjadi bentuk Eselon Baris
-   */
+
   public void toREF() {
     Coordinate pivot = getPivot(0);
     int curLead = pivot.getCol();
@@ -217,6 +244,17 @@ public class Matrix {
     }
   }
 
+  public void toUpperTriangle() {
+    for (int row = 0; row < getRowLength(); row++) {
+      for (int rowBelow = row + 1; rowBelow < getRowLength(); rowBelow++) {
+        if (this.mat[rowBelow][row] > this.EPSILON_IMPRECISION) {
+          double multiplier = (-1) * this.mat[rowBelow][row] / this.mat[row][row];
+          doRowOperation(row, rowBelow, multiplier);
+        }
+      }
+    }
+  }
+
   public void toRREF() {
     toREF();
     for (int row = getRowLastIdx(); row > 0; row--) {
@@ -230,5 +268,20 @@ public class Matrix {
         }
       }
     }
+  }
+
+  public double findDeterminantTriangle() {
+    if (!this.isSquare()) {
+      return this.VAL_UNDEF;
+    }
+    Matrix copy = this.copyMatrix();
+    copy.writeMatrix();
+    copy.toUpperTriangle();
+    copy.writeMatrix();
+    float determinant = 1;
+    for (int row = 0; row < getRowLength(); row++) {
+      determinant *= copy.getMatrixElement(row, row);
+    }   
+    return determinant;
   }
 }
