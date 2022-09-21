@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Scanner;
 
 import io.FileReader;
+import point.*;
 import matrix.*;
 
 public class Interface {
@@ -15,7 +16,8 @@ public class Interface {
         System.out.println("\nMenu");
         System.out.println("1. Input dari keyboard & Display Matriks");
         System.out.println("2. Input dari file & Display Matriks");
-        System.out.println("3. Keluar\n==============");
+        System.out.println("3. Input points dari file");
+        System.out.println("4. Keluar\n==============");
 
         System.out.print("Masukan: ");
 
@@ -30,6 +32,7 @@ public class Interface {
 
         boolean active = true;
         while (active) {
+            FileReader fileReader = new FileReader();
             int menuChoice = this.mainMenu();
             switch (menuChoice) {
                 case 1:
@@ -49,7 +52,6 @@ public class Interface {
                     // baru.writeMatrix();
                     break;
                 case 2:
-                    FileReader fileReader = new FileReader();
                     if (fileReader.setFileName(scanner)) {
                         Matrix m = fileReader.readMatrix();
                         m.writeMatrix();
@@ -57,8 +59,19 @@ public class Interface {
                         System.out.println("File tidak ditemukan.");
                     }
                     break;
-                default:
+                case 3:
+                    if (fileReader.setFileName(scanner)) {
+                        Points p = fileReader.readPoints("ITPS");
+                        p.writePoints();
+                    } else {
+                        System.out.println("File tidak ditemukan.");
+                    }
+                    break;
+                case 4:
                     active = false;
+                    break;
+                default:
+                    System.out.println("Opsi tidak tersedia.");
                     break;
             }
         }
