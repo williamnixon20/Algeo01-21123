@@ -90,7 +90,11 @@ public class Matrix {
     if (this.isValid) {
       for (int i = 0; i < this.rowEff; i++) {
         for (int j = 0; j < this.colEff; j++) {
-          System.out.printf("%.2f ", this.mat[i][j]);
+          double val = this.mat[i][j];
+          if (val > -0.0001 && val < 0) {
+            val = 0;
+          }
+          System.out.printf("%.2f ", val);
         }
         System.out.print("\n");
       }
