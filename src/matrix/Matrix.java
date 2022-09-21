@@ -85,40 +85,16 @@ public class Matrix {
   }
 
   /**
-   * 
-   * @param row        indeks baris yang akan dikalikan oleh konstanta
-   * @param multiplier konstanta pengali di dalam OBE
-   */
-  public void multiplyRow(int row, double multiplier) {
-    for (int col = 0; col < this.colEff; col++) {
-      this.mat[row][col] *= multiplier;
-    }
-  }
-
-  /**
    * Menulis matriks ke layar
    */
   public void writeMatrix() {
     if (this.isValid) {
-      for (int i = 0; i < this.rowEff; i++) {
+      for (int i = 0; i < getRowLength(); i++) {
         for (int j = 0; j < this.colEff; j++) {
           System.out.printf("%.2f ", this.mat[i][j]);
         }
         System.out.print("\n");
       }
-    }
-  }
-
-  /**
-   * @param firstRow  indeks baris yang akan ditukar dengan baris kedua
-   * @param secondRow indeks baris yang akan ditukar dengan baris pertama
-   */
-  public void swapRow(int firstRow, int secondRow) {
-    double temp;
-    for (int col = 0; col < this.colEff; col++) {
-      temp = this.mat[firstRow][col];
-      this.mat[firstRow][col] = this.mat[secondRow][col];
-      this.mat[secondRow][col] = temp;
     }
   }
 
@@ -147,12 +123,36 @@ public class Matrix {
   }
 
   /**
+   * 
+   * @param row        indeks baris yang akan dikalikan oleh konstanta
+   * @param multiplier konstanta pengali di dalam OBE
+   */
+  public void multiplyRow(int row, double multiplier) {
+    for (int col = 0; col < this.colEff; col++) {
+      this.mat[row][col] *= multiplier;
+    }
+  }
+
+  /**
+   * @param firstRow  indeks baris yang akan ditukar dengan baris kedua
+   * @param secondRow indeks baris yang akan ditukar dengan baris pertama
+   */
+  public void swapRow(int firstRow, int secondRow) {
+    double temp;
+    for (int col = 0; col < getColLength(); col++) {
+      temp = this.mat[firstRow][col];
+      this.mat[firstRow][col] = this.mat[secondRow][col];
+      this.mat[secondRow][col] = temp;
+    }
+  }
+
+  /**
    * @param row indeks baris yang akan dicari indeks letak leading koefisiennya
    * @return indeks kolom dari leading koefisiennya, 1000 (MAX_DIMENSION) jika
    *         baris nol semua
    */
   public int getLeadingCoeffIdx(int row) {
-    for (int col = 0; col < this.colEff; col++) {
+    for (int col = 0; col < getColLength(); col++) {
       if (this.mat[row][col] != 0) {
         return col;
       }
@@ -168,7 +168,7 @@ public class Matrix {
    */
   public Coordinate getPivot(int startRow) {
     Coordinate pivot = new Coordinate(startRow, getLeadingCoeffIdx(startRow));
-    for (int row = startRow + 1; row < this.rowEff; row++) {
+    for (int row = startRow + 1; row < getRowLength(); row++) {
       int leadCoeff = getLeadingCoeffIdx(row);
 
       if (leadCoeff < pivot.getCol()) {
@@ -186,7 +186,7 @@ public class Matrix {
   public void toREF() {
     Coordinate pivot = getPivot(0);
     int curLead = pivot.getCol();
-    for (int row = 0; row < this.rowEff - 1; row++) {
+    for (int row = 0; row < getRowLength() - 1; row++) {
       if (pivot.getRow() != row) {
         swapRow(pivot.getRow(), row);
       }
@@ -195,7 +195,7 @@ public class Matrix {
         multiplyRow(row, 1 / this.mat[row][curLead]);
       }
 
-      for (int xrow = row + 1; xrow < this.rowEff; xrow++) {
+      for (int xrow = row + 1; xrow < getRowLength(); xrow++) {
         int nextLead = getLeadingCoeffIdx(xrow);
         if (curLead == nextLead) {
           double multiplier = (-1) * this.mat[xrow][curLead] / this.mat[row][curLead];
