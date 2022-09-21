@@ -187,19 +187,21 @@ public class Matrix {
     Coordinate pivot = getPivot(0);
     int curLead = pivot.getCol();
     for (int row = 0; row < getRowLength() - 1; row++) {
-      if (pivot.getRow() != row) {
-        swapRow(pivot.getRow(), row);
-      }
+      if (curLead < MAX_DIMENSION) {
+        if (pivot.getRow() != row) {
+          swapRow(pivot.getRow(), row);
+        }
 
-      if (this.mat[row][curLead] != 1) {
-        multiplyRow(row, 1 / this.mat[row][curLead]);
-      }
+        if (this.mat[row][curLead] != 1) {
+          multiplyRow(row, 1 / this.mat[row][curLead]);
+        }
 
-      for (int xrow = row + 1; xrow < getRowLength(); xrow++) {
-        int nextLead = getLeadingCoeffIdx(xrow);
-        if (curLead == nextLead) {
-          double multiplier = (-1) * this.mat[xrow][curLead] / this.mat[row][curLead];
-          doRowOperation(row, xrow, multiplier);
+        for (int xrow = row + 1; xrow < getRowLength(); xrow++) {
+          int nextLead = getLeadingCoeffIdx(xrow);
+          if (curLead == nextLead) {
+            double multiplier = (-1) * this.mat[xrow][curLead] / this.mat[row][curLead];
+            doRowOperation(row, xrow, multiplier);
+          }
         }
       }
       pivot = getPivot(row + 1);
