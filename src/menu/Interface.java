@@ -42,6 +42,9 @@ public class Interface {
                     Matrix baru = new Matrix(row, col, true, scanner);
                     baru.readMatrix();
                     baru.writeMatrix();
+                    System.out.println("Matriks dalam bentuk baris eselon tereduksi:");
+                    baru.toRREF();
+                    baru.writeMatrix();
                     break;
                 case 2:
                     FileReader fileReader = new FileReader();
