@@ -127,8 +127,21 @@ public class Matrix {
         baru.setMatrixElement(i, j, this.mat[i][j]);
       }
     }
-    baru.writeMatrix();
     return baru;
+  }
+
+  public void makeIdentity() {
+    for (int i = 0; i < this.rowEff; i++) {
+      for (int j = 0; j < this.colEff; j++) {
+        float value;
+        if (i == j) {
+          value = 1;
+        } else {
+          value = 0;
+        }
+        this.setMatrixElement(i, j, value);
+      }
+    }
   }
 
   /**
@@ -243,18 +256,6 @@ public class Matrix {
       multiplyRow(getRowLastIdx(), 1 / this.mat[getRowLastIdx()][curLead]);
     }
   }
-
-  public void toUpperTriangle() {
-    for (int row = 0; row < getRowLength(); row++) {
-      for (int rowBelow = row + 1; rowBelow < getRowLength(); rowBelow++) {
-        if (this.mat[rowBelow][row] > this.EPSILON_IMPRECISION) {
-          double multiplier = (-1) * this.mat[rowBelow][row] / this.mat[row][row];
-          doRowOperation(row, rowBelow, multiplier);
-        }
-      }
-    }
-  }
-
   /**
    * Mengubah matriks menjadi bentuk Eselon Baris Tereduksi
    */
@@ -273,14 +274,78 @@ public class Matrix {
     }
   }
 
+  public void toREFWithInverse(Matrix inverse) {
+    Coordinate pivot = getPivot(0);
+    int curLead = pivot.getCol();
+    for (int row = 0; row < getRowLength() - 1; row++) {
+      if (curLead < MAX_DIMENSION) {
+        if (pivot.getRow() != row) {
+          int pivotRow = pivot.getRow();
+          swapRow(pivotRow, row);
+          inverse.swapRow(pivotRow, row);
+        }
+
+        if (this.mat[row][curLead] != 1) {
+          double value = 1 / this.mat[row][curLead]; 
+          multiplyRow(row, value);
+          inverse.multiplyRow(row, value);
+        }
+
+        for (int xrow = row + 1; xrow < getRowLength(); xrow++) {
+          int nextLead = getLeadingCoeffIdx(xrow);
+          if (curLead == nextLead) {
+            double multiplier = (-1) * this.mat[xrow][curLead] / this.mat[row][curLead];
+            System.out.print("Multiplying row " + xrow + " with " + multiplier);     
+            doRowOperation(row, xrow, multiplier);
+            inverse.doRowOperation(row, xrow, multiplier);
+          }
+        }
+      }
+      pivot = getPivot(row + 1);
+      curLead = pivot.getCol();
+    }
+    if (curLead < MAX_DIMENSION && this.mat[getRowLastIdx()][curLead] != 1) {
+      double multiplier = 1 / this.mat[getRowLastIdx()][curLead];
+      multiplyRow(getRowLastIdx(), multiplier);
+      inverse.multiplyRow(getRowLastIdx(), multiplier);
+    }
+
+  }
+
+  public void toRREFWithInverse(Matrix inverse) {
+    toREFWithInverse(inverse);
+    for (int row = getRowLastIdx(); row > 0; row--) {
+      int curLead = getLeadingCoeffIdx(row);
+      if (curLead < MAX_DIMENSION) {
+        for (int xrow = row - 1; xrow >= 0; xrow--) {
+          if (this.mat[xrow][curLead] != 0) {
+            double multiplier = (-1) * this.mat[xrow][curLead] / this.mat[row][curLead];
+            doRowOperation(row, xrow, multiplier);
+            inverse.doRowOperation(row, xrow, multiplier);
+          }
+        }
+      }
+    }
+  }
+
+  public void toUpperTriangle() {
+    for (int row = 0; row < getRowLength(); row++) {
+      for (int rowBelow = row + 1; rowBelow < getRowLength(); rowBelow++) {
+        if (this.mat[rowBelow][row] > this.EPSILON_IMPRECISION) {
+          double multiplier = (-1) * this.mat[rowBelow][row] / this.mat[row][row];
+          doRowOperation(row, rowBelow, multiplier);
+        }
+      }
+    }
+  }
+
+
   public double getDeterminantWithTriangle() {
     if (!this.isSquare()) {
       return this.VAL_UNDEF;
     }
     Matrix copy = this.copyMatrix();
-    copy.writeMatrix();
     copy.toUpperTriangle();
-    copy.writeMatrix();
     float determinant = 1;
     for (int row = 0; row < getRowLength(); row++) {
       determinant *= copy.getMatrixElement(row, row);
@@ -328,5 +393,16 @@ public class Matrix {
 
       return det;
     }
+  }
+
+  public Matrix getInverse() {
+    if (!isSquare() || getDeterminantWithTriangle() == 0) {
+      return new Matrix(0, 0, false, this.scanner);
+    } 
+    Matrix copy = this.copyMatrix();    
+    Matrix Inverse = new Matrix(this.rowEff, this.colEff, true, this.scanner);
+    Inverse.makeIdentity();
+    copy.toRREFWithInverse(Inverse);
+    return Inverse;
   }
 }

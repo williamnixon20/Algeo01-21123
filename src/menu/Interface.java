@@ -43,9 +43,10 @@ public class Interface {
                     baru.readMatrix();
                     baru.writeMatrix();
                     System.out.printf("Determinan matriks: %.2f dan lewat metode segitiga %.2f\n", baru.getDetWithCofactor(), baru.getDeterminantWithTriangle());
-                    System.out.println("Matriks dalam bentuk baris eselon tereduksi:");
-                    baru.toRREF();
-                    baru.writeMatrix();
+                    System.out.println("Matriks inversnya");
+                    baru.getInverse().writeMatrix();
+                    // baru.toRREF();
+                    // baru.writeMatrix();
                     break;
                 case 2:
                     FileReader fileReader = new FileReader();
