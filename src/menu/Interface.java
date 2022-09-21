@@ -36,9 +36,20 @@ public class Interface {
             int menuChoice = this.mainMenu();
             switch (menuChoice) {
                 case 1:
-                    Matrix baru = new Matrix(3, 3, true, scanner);
+                    int row, col;
+                    System.out.print("Masukkan panjang baris: ");
+                    row = this.scanner.nextInt();
+                    System.out.print("Masukkan panjang kolom: ");
+                    col = this.scanner.nextShort();
+
+                    Matrix baru = new Matrix(row, col, true, scanner);
                     baru.readMatrix();
                     baru.writeMatrix();
+                    System.out.printf("Determinan matriks: %.2f dan lewat metode segitiga %.2f\n", baru.getDetWithCofactor(), baru.getDeterminantWithTriangle());
+                    System.out.println("Matriks inversnya");
+                    baru.getInverse().writeMatrix();
+                    // baru.toRREF();
+                    // baru.writeMatrix();
                     break;
                 case 2:
                     if (fileReader.setFileName(scanner)) {

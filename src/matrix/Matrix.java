@@ -4,7 +4,9 @@ import java.util.*;
 import matrix.coordinate.*;
 
 public class Matrix {
-  static final int MAX_DIMENSION = 1000;
+  public int MAX_DIMENSION = 1000;
+  public double VAL_UNDEF = -99999999;
+  public double EPSILON_IMPRECISION = 0.0000001;
   /**
    * private artinya tidak bisa diakses dari luar
    * segala interaksi dengan field harus dilakukan dengan fungsi di kelas matriks
@@ -20,6 +22,7 @@ public class Matrix {
    * 
    * @param row     Dimensi baris yang ingin dimiliki matriks
    * @param col     Dimensi kolom yang ingin dimiliki matriks
+   * @param isValid 
    * @param scanner Scanner u/matriks
    */
   public Matrix(int row, int col, boolean isValid, Scanner scanner) {
@@ -61,15 +64,30 @@ public class Matrix {
   }
 
   /**
-   * 
    * Menimpa element pada index [row][col] dengan value
+   * @param row
+   * @param col
+   * @param value
    */
   public void setMatrixElement(int row, int col, double value) {
     this.mat[row][col] = value;
   }
 
+  /**
+   * Menimpa element pada index [row][col] dengan value
+   * @param row
+   * @param col
+   */
+  public double getMatrixElement(int row, int col) {
+    return this.mat[row][col];
+  }
+
   public void changeMatrixValidity(boolean isValid) {
     this.isValid = isValid;
+  }
+
+  public boolean isSquare() {
+    return getColLength() == getRowLength();
   }
 
   /**
@@ -83,7 +101,6 @@ public class Matrix {
       }
     }
   }
-
   /**
    * Menulis matriks ke layar
    */
@@ -91,9 +108,38 @@ public class Matrix {
     if (this.isValid) {
       for (int i = 0; i < getRowLength(); i++) {
         for (int j = 0; j < this.colEff; j++) {
-          System.out.printf("%.2f ", this.mat[i][j]);
+          /** Mencegah adanya -0 dan 0 akibat doubleing point imprecision */
+          double val = this.mat[i][j];
+          if (val > (-this.EPSILON_IMPRECISION) && val < this.EPSILON_IMPRECISION) {
+            val = this.EPSILON_IMPRECISION;
+          }
+          System.out.printf("%.2f ", val, val);
         }
         System.out.print("\n");
+      }
+    }
+  }
+
+  public Matrix copyMatrix() {
+    Matrix baru = new Matrix(this.rowEff, this.colEff, true, this.scanner);
+    for (int i = 0; i < this.rowEff; i++) {
+      for (int j = 0; j < this.colEff; j++) {
+        baru.setMatrixElement(i, j, this.mat[i][j]);
+      }
+    }
+    return baru;
+  }
+
+  public void makeIdentity() {
+    for (int i = 0; i < this.rowEff; i++) {
+      for (int j = 0; j < this.colEff; j++) {
+        float value;
+        if (i == j) {
+          value = 1;
+        } else {
+          value = 0;
+        }
+        this.setMatrixElement(i, j, value);
       }
     }
   }
@@ -180,26 +226,26 @@ public class Matrix {
     return pivot;
   }
 
-  /**
-   * Mengubah matriks menjadi bentuk Eselon Baris
-   */
+
   public void toREF() {
     Coordinate pivot = getPivot(0);
     int curLead = pivot.getCol();
     for (int row = 0; row < getRowLength() - 1; row++) {
-      if (pivot.getRow() != row) {
-        swapRow(pivot.getRow(), row);
-      }
+      if (curLead < MAX_DIMENSION) {
+        if (pivot.getRow() != row) {
+          swapRow(pivot.getRow(), row);
+        }
 
-      if (this.mat[row][curLead] != 1) {
-        multiplyRow(row, 1 / this.mat[row][curLead]);
-      }
+        if (this.mat[row][curLead] != 1) {
+          multiplyRow(row, 1 / this.mat[row][curLead]);
+        }
 
-      for (int xrow = row + 1; xrow < getRowLength(); xrow++) {
-        int nextLead = getLeadingCoeffIdx(xrow);
-        if (curLead == nextLead) {
-          double multiplier = (-1) * this.mat[xrow][curLead] / this.mat[row][curLead];
-          doRowOperation(row, xrow, multiplier);
+        for (int xrow = row + 1; xrow < getRowLength(); xrow++) {
+          int nextLead = getLeadingCoeffIdx(xrow);
+          if (curLead == nextLead) {
+            double multiplier = (-1) * this.mat[xrow][curLead] / this.mat[row][curLead];
+            doRowOperation(row, xrow, multiplier);
+          }
         }
       }
       pivot = getPivot(row + 1);
@@ -210,5 +256,153 @@ public class Matrix {
       multiplyRow(getRowLastIdx(), 1 / this.mat[getRowLastIdx()][curLead]);
     }
   }
+  /**
+   * Mengubah matriks menjadi bentuk Eselon Baris Tereduksi
+   */
+  public void toRREF() {
+    toREF();
+    for (int row = getRowLastIdx(); row > 0; row--) {
+      int curLead = getLeadingCoeffIdx(row);
+      if (curLead < MAX_DIMENSION) {
+        for (int xrow = row - 1; xrow >= 0; xrow--) {
+          if (this.mat[xrow][curLead] != 0) {
+            double multiplier = (-1) * this.mat[xrow][curLead] / this.mat[row][curLead];
+            doRowOperation(row, xrow, multiplier);
+          }
+        }
+      }
+    }
+  }
 
+  public void toREFWithInverse(Matrix inverse) {
+    Coordinate pivot = getPivot(0);
+    int curLead = pivot.getCol();
+    for (int row = 0; row < getRowLength() - 1; row++) {
+      if (curLead < MAX_DIMENSION) {
+        if (pivot.getRow() != row) {
+          int pivotRow = pivot.getRow();
+          swapRow(pivotRow, row);
+          inverse.swapRow(pivotRow, row);
+        }
+
+        if (this.mat[row][curLead] != 1) {
+          double value = 1 / this.mat[row][curLead]; 
+          multiplyRow(row, value);
+          inverse.multiplyRow(row, value);
+        }
+
+        for (int xrow = row + 1; xrow < getRowLength(); xrow++) {
+          int nextLead = getLeadingCoeffIdx(xrow);
+          if (curLead == nextLead) {
+            double multiplier = (-1) * this.mat[xrow][curLead] / this.mat[row][curLead];
+            System.out.print("Multiplying row " + xrow + " with " + multiplier);     
+            doRowOperation(row, xrow, multiplier);
+            inverse.doRowOperation(row, xrow, multiplier);
+          }
+        }
+      }
+      pivot = getPivot(row + 1);
+      curLead = pivot.getCol();
+    }
+    if (curLead < MAX_DIMENSION && this.mat[getRowLastIdx()][curLead] != 1) {
+      double multiplier = 1 / this.mat[getRowLastIdx()][curLead];
+      multiplyRow(getRowLastIdx(), multiplier);
+      inverse.multiplyRow(getRowLastIdx(), multiplier);
+    }
+
+  }
+
+  public void toRREFWithInverse(Matrix inverse) {
+    toREFWithInverse(inverse);
+    for (int row = getRowLastIdx(); row > 0; row--) {
+      int curLead = getLeadingCoeffIdx(row);
+      if (curLead < MAX_DIMENSION) {
+        for (int xrow = row - 1; xrow >= 0; xrow--) {
+          if (this.mat[xrow][curLead] != 0) {
+            double multiplier = (-1) * this.mat[xrow][curLead] / this.mat[row][curLead];
+            doRowOperation(row, xrow, multiplier);
+            inverse.doRowOperation(row, xrow, multiplier);
+          }
+        }
+      }
+    }
+  }
+
+  public void toUpperTriangle() {
+    for (int row = 0; row < getRowLength(); row++) {
+      for (int rowBelow = row + 1; rowBelow < getRowLength(); rowBelow++) {
+        if (this.mat[rowBelow][row] > this.EPSILON_IMPRECISION) {
+          double multiplier = (-1) * this.mat[rowBelow][row] / this.mat[row][row];
+          doRowOperation(row, rowBelow, multiplier);
+        }
+      }
+    }
+  }
+
+
+  public double getDeterminantWithTriangle() {
+    if (!this.isSquare()) {
+      return this.VAL_UNDEF;
+    }
+    Matrix copy = this.copyMatrix();
+    copy.toUpperTriangle();
+    float determinant = 1;
+    for (int row = 0; row < getRowLength(); row++) {
+      determinant *= copy.getMatrixElement(row, row);
+    }   
+    return determinant;
+  }
+  /**
+   * 
+   * @param refRow baris yang akan dihilangkan dalam perhitungan
+   * @param refCol kolom yang akan dihilangkan dalam perhitungan
+   * @return kofaktor dari refRow dan refCol
+   */
+  public double getCofactor(int refRow, int refCol) {
+    Scanner scanner = new Scanner(System.in);
+    Matrix m = new Matrix(getRowLength() - 1, getColLength() - 1, true, scanner);
+
+    for (int row = 0; row <= m.getRowLastIdx(); row++) {
+      for (int col = 0; col <= m.getColLastIdx(); col++) {
+        m.setMatrixElement(row, col, this.mat[row + (row >= refRow ? 1 : 0)][col + (col >= refCol ? 1 : 0)]);
+      }
+    }
+
+    if ((refRow + refCol) % 2 == 0) {
+      return m.getDetWithCofactor();
+    } else {
+      return (-1) * m.getDetWithCofactor();
+    }
+  }
+
+  /**
+   * 
+   * @return determinan Matriks dengan metode kofaktor
+   */
+  public double getDetWithCofactor() {
+    double det = 0;
+    int row = 0;
+    if (getRowLength() == 1) {
+      return this.mat[0][0];
+    } else if (getRowLength() == 2) {
+      return ((this.mat[0][0] * this.mat[1][1]) - (this.mat[0][1] * this.mat[1][0]));
+    } else {
+      for (int col = 0; col <= getColLastIdx(); col++) {
+        det += this.mat[row][col] * getCofactor(row, col);
+      }
+
+      return det;
+    }
+  }
+
+  public Matrix getInverse() {
+    if (!isSquare() || getDeterminantWithTriangle() == 0) {
+      return new Matrix(0, 0, false, this.scanner);
+    } 
+    Matrix copy = this.copyMatrix();    
+    Matrix Inverse = new Matrix(this.rowEff, this.colEff, true, this.scanner);
+    Inverse.makeIdentity();
+    copy.toRREFWithInverse(Inverse);
+    return Inverse;
+  }
 }
