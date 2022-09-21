@@ -16,6 +16,7 @@ public class FileReader {
 
   public boolean setFileName(Scanner scanner) {
     System.out.print("Masukkan nama file: ");
+    System.out.println(cwd);
     String fileName = scanner.next();
 
     /**
@@ -36,8 +37,8 @@ public class FileReader {
    * Add the file name at the end of the cwd
    */
   private void changeCWD(String fileName) {
-    this.cwd = this.cwd.substring(0, cwd.length() - 3);
-    this.cwd += "test/" + fileName;
+    // this.cwd = this.cwd.substring(0, cwd.length() - 3);
+    this.cwd += "/test/" + fileName;
   }
 
   public Matrix readMatrix() throws IOException {
