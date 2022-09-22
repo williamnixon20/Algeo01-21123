@@ -295,7 +295,6 @@ public class Matrix {
           int nextLead = getLeadingCoeffIdx(xrow);
           if (curLead == nextLead) {
             double multiplier = (-1) * this.mat[xrow][curLead] / this.mat[row][curLead];
-            System.out.print("Multiplying row " + xrow + " with " + multiplier);     
             doRowOperation(row, xrow, multiplier);
             inverse.doRowOperation(row, xrow, multiplier);
           }
@@ -329,11 +328,11 @@ public class Matrix {
   }
 
   public void toUpperTriangle() {
-    for (int row = 0; row < getRowLength(); row++) {
-      for (int rowBelow = row + 1; rowBelow < getRowLength(); rowBelow++) {
-        if (this.mat[rowBelow][row] > this.EPSILON_IMPRECISION) {
-          double multiplier = (-1) * this.mat[rowBelow][row] / this.mat[row][row];
-          doRowOperation(row, rowBelow, multiplier);
+    for (int col = 0; col < getColLength(); col++) {
+      for (int rowBelow = col + 1; rowBelow < getRowLength(); rowBelow++) {
+        if (Math.abs(this.mat[rowBelow][col]) > EPSILON_IMPRECISION) {
+          double multiplier = (-1) * this.mat[rowBelow][col] / this.mat[col][col];
+          doRowOperation(col, rowBelow, multiplier);
         }
       }
     }
@@ -346,6 +345,7 @@ public class Matrix {
     }
     Matrix copy = this.copyMatrix();
     copy.toUpperTriangle();
+    copy.writeMatrix();
     float determinant = 1;
     for (int row = 0; row < getRowLength(); row++) {
       determinant *= copy.getMatrixElement(row, row);
@@ -359,8 +359,7 @@ public class Matrix {
    * @return kofaktor dari refRow dan refCol
    */
   public double getCofactor(int refRow, int refCol) {
-    Scanner scanner = new Scanner(System.in);
-    Matrix m = new Matrix(getRowLength() - 1, getColLength() - 1, true, scanner);
+    Matrix m = new Matrix(getRowLength() - 1, getColLength() - 1, true, this.scanner);
 
     for (int row = 0; row <= m.getRowLastIdx(); row++) {
       for (int col = 0; col <= m.getColLastIdx(); col++) {
@@ -404,5 +403,41 @@ public class Matrix {
     Inverse.makeIdentity();
     copy.toRREFWithInverse(Inverse);
     return Inverse;
+  }
+
+  public Matrix getMatrixCofactor() {
+    Matrix adj = new Matrix(this.rowEff, this.colEff, true, this.scanner);
+    for (int i = 0; i < this.rowEff; i++) {
+      for (int j = 0; j < this.colEff; j++) {
+        double value = getCofactor(i, j);
+        adj.setMatrixElement(i, j, value);
+      }
+    }
+    return adj;
+  }
+
+  public Matrix tranpose() {
+    Matrix mOut = new Matrix(this.colEff, this.rowEff, true, this.scanner);
+    int i, j;
+    for (i = 0; i < mOut.getRowLength(); i++) {
+        for (j = 0; j < mOut.getColLength(); j++) {
+            mOut.setMatrixElement(i, j, this.getMatrixElement(j, i));
+        }
+    }
+    return mOut;
+  }
+  public Matrix getAdjoin() {
+    Matrix kofaktor = this.getMatrixCofactor();
+    Matrix adjoin = kofaktor.tranpose();
+    return adjoin;
+  }
+
+  public Matrix getInverseWithAdjoin() {
+    double determinant = this.getDetWithCofactor();
+    Matrix adjoin = this.getAdjoin();
+    for (int i = 0; i < adjoin.getRowLength(); i++) {
+      adjoin.multiplyRow(i, 1/determinant);
+    }
+    return adjoin;
   }
 }

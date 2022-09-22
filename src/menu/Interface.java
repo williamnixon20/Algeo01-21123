@@ -48,6 +48,7 @@ public class Interface {
                     System.out.printf("Determinan matriks: %.2f dan lewat metode segitiga %.2f\n", baru.getDetWithCofactor(), baru.getDeterminantWithTriangle());
                     System.out.println("Matriks inversnya");
                     baru.getInverse().writeMatrix();
+                    baru.getInverseWithAdjoin().writeMatrix();
                     // baru.toRREF();
                     // baru.writeMatrix();
                     break;
