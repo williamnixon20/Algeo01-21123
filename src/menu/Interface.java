@@ -1,11 +1,15 @@
 package menu;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 
 import io.FileReader;
+import lineq.Lineq;
 import point.*;
 import matrix.*;
+import matrix.expression.Expression;
 
 public class Interface {
     private Scanner scanner;
@@ -17,7 +21,8 @@ public class Interface {
         System.out.println("1. Input dari keyboard & Display Matriks");
         System.out.println("2. Input dari file & Display Matriks");
         System.out.println("3. Input points dari file");
-        System.out.println("4. Keluar\n==============");
+        System.out.println("4. Gauss");
+        System.out.println("5. Keluar\n==============");
 
         System.out.print("Masukan: ");
 
@@ -45,7 +50,8 @@ public class Interface {
                     Matrix baru = new Matrix(row, col, true, scanner);
                     baru.readMatrix();
                     baru.writeMatrix();
-                    System.out.printf("Determinan matriks: %.2f dan lewat metode segitiga %.2f\n", baru.getDetWithCofactor(), baru.getDeterminantWithTriangle());
+                    System.out.printf("Determinan matriks: %.2f dan lewat metode segitiga %.2f\n",
+                            baru.getDetWithCofactor(), baru.getDeterminantWithTriangle());
                     System.out.println("Matriks inversnya");
                     baru.getInverse().writeMatrix();
                     baru.getInverseWithAdjoin().writeMatrix();
@@ -69,6 +75,15 @@ public class Interface {
                     }
                     break;
                 case 4:
+                    if (fileReader.setFileName(scanner)) {
+                        Matrix m = fileReader.readMatrix();
+                        Lineq leq = new Lineq();
+                        leq.Gauss(m);
+                    } else {
+                        System.out.println("File tidak ditemukan.");
+                    }
+                    break;
+                case 5:
                     active = false;
                     break;
                 default:
