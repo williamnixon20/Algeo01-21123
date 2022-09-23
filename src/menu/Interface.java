@@ -57,6 +57,8 @@ public class Interface {
                     baru.getInverseWithAdjoin().writeMatrix();
                     // baru.toRREF();
                     // baru.writeMatrix();
+                    baru.toRREF();
+                    baru.writeMatrix();
                     break;
                 case 2:
                     if (fileReader.setFileName(scanner)) {
