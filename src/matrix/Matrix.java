@@ -5,7 +5,7 @@ import matrix.coordinate.*;
 
 public class Matrix {
   public int MAX_DIMENSION = 1000;
-  public double VAL_UNDEF = -99999999;
+  public int VAL_UNDEF = 99999999;
   public double EPSILON_IMPRECISION = 0.0000001;
   /**
    * private artinya tidak bisa diakses dari luar
@@ -113,8 +113,8 @@ public class Matrix {
         for (int j = 0; j < this.colEff; j++) {
           /** Mencegah adanya -0 dan 0 akibat doubleing point imprecision */
           double val = this.mat[i][j];
-          if (val > (-this.EPSILON_IMPRECISION) && val < this.EPSILON_IMPRECISION) {
-            val = this.EPSILON_IMPRECISION;
+          if (Math.abs(val) < this.EPSILON_IMPRECISION) {
+            val = 0;
           }
           System.out.printf("%.2f ", val, val);
         }
@@ -195,18 +195,42 @@ public class Matrix {
     }
   }
 
+  public Matrix multiplyMatrix(Matrix m2) {
+    // 2x3 x 3,2
+    Matrix val = new Matrix(this.getRowLength(), m2.getColLength(), true, this.scanner);
+    for (int i = 0; i < val.getRowLength(); i++) {
+        for (int j = 0; j < val.getColLength(); j++) {
+            for (int k = 0; k < m2.getRowLength(); k++) {
+                double currVal = val.getMatrixElement(i, j);
+                double addition = this.getMatrixElement(i, k) * m2.getMatrixElement(k, j);
+                val.setMatrixElement(i, j, currVal + addition);
+            }
+        }
+    }
+    return val;
+};
+
   /**
    * @param row indeks baris yang akan dicari indeks letak leading koefisiennya
-   * @return indeks kolom dari leading koefisiennya, 1000 (MAX_DIMENSION) jika
+   * @return indeks kolom dari leading koefisiennya,  jika
    *         baris nol semua
    */
   public int getLeadingCoeffIdx(int row) {
     for (int col = 0; col < getColLength(); col++) {
+      if (Math.abs(this.mat[row][col]) > EPSILON_IMPRECISION) {
+        return col;
+      }
+    }
+    return VAL_UNDEF;
+  }
+
+  public int getTrailingCoeffIdx(int row) {
+    for (int col = getColLastIdx(); col >= 0; col--) {
       if (this.mat[row][col] != 0) {
         return col;
       }
     }
-    return MAX_DIMENSION;
+    return VAL_UNDEF;
   }
 
   /**
@@ -229,11 +253,25 @@ public class Matrix {
     return pivot;
   }
 
+  public Coordinate getPivotReverse(int startRow) {
+    Coordinate pivot = new Coordinate(startRow, getTrailingCoeffIdx(startRow));
+    for (int row = startRow - 1; row >= 0; row--) {
+      int leadCoeff = getTrailingCoeffIdx(row);
+
+      if (leadCoeff < pivot.getCol()) {
+        pivot.setRow(row);
+        pivot.setCol(leadCoeff);
+      }
+    }
+
+    return pivot;
+  }
+
   public void toREF() {
     Coordinate pivot = getPivot(0);
     int curLead = pivot.getCol();
     for (int row = 0; row < getRowLength() - 1; row++) {
-      if (curLead < MAX_DIMENSION) {
+      if (curLead < VAL_UNDEF) {
         if (pivot.getRow() != row) {
           swapRow(pivot.getRow(), row);
         }
@@ -254,7 +292,7 @@ public class Matrix {
       curLead = pivot.getCol();
     }
 
-    if (curLead < MAX_DIMENSION && this.mat[getRowLastIdx()][curLead] != 1) {
+    if (curLead < VAL_UNDEF && this.mat[getRowLastIdx()][curLead] != 1) {
       multiplyRow(getRowLastIdx(), 1 / this.mat[getRowLastIdx()][curLead]);
     }
   }
@@ -266,7 +304,7 @@ public class Matrix {
     toREF();
     for (int row = getRowLastIdx(); row > 0; row--) {
       int curLead = getLeadingCoeffIdx(row);
-      if (curLead < MAX_DIMENSION) {
+      if (curLead < VAL_UNDEF) {
         for (int xrow = row - 1; xrow >= 0; xrow--) {
           if (this.mat[xrow][curLead] != 0) {
             double multiplier = (-1) * this.mat[xrow][curLead] / this.mat[row][curLead];
@@ -281,7 +319,7 @@ public class Matrix {
     Coordinate pivot = getPivot(0);
     int curLead = pivot.getCol();
     for (int row = 0; row < getRowLength() - 1; row++) {
-      if (curLead < MAX_DIMENSION) {
+      if (curLead < VAL_UNDEF) {
         if (pivot.getRow() != row) {
           int pivotRow = pivot.getRow();
           swapRow(pivotRow, row);
@@ -298,7 +336,6 @@ public class Matrix {
           int nextLead = getLeadingCoeffIdx(xrow);
           if (curLead == nextLead) {
             double multiplier = (-1) * this.mat[xrow][curLead] / this.mat[row][curLead];
-            System.out.print("Multiplying row " + xrow + " with " + multiplier);
             doRowOperation(row, xrow, multiplier);
             inverse.doRowOperation(row, xrow, multiplier);
           }
@@ -307,7 +344,7 @@ public class Matrix {
       pivot = getPivot(row + 1);
       curLead = pivot.getCol();
     }
-    if (curLead < MAX_DIMENSION && this.mat[getRowLastIdx()][curLead] != 1) {
+    if (curLead < VAL_UNDEF && this.mat[getRowLastIdx()][curLead] != 1) {
       double multiplier = 1 / this.mat[getRowLastIdx()][curLead];
       multiplyRow(getRowLastIdx(), multiplier);
       inverse.multiplyRow(getRowLastIdx(), multiplier);
@@ -319,7 +356,7 @@ public class Matrix {
     toREFWithInverse(inverse);
     for (int row = getRowLastIdx(); row > 0; row--) {
       int curLead = getLeadingCoeffIdx(row);
-      if (curLead < MAX_DIMENSION) {
+      if (curLead < VAL_UNDEF) {
         for (int xrow = row - 1; xrow >= 0; xrow--) {
           if (this.mat[xrow][curLead] != 0) {
             double multiplier = (-1) * this.mat[xrow][curLead] / this.mat[row][curLead];
@@ -331,25 +368,72 @@ public class Matrix {
     }
   }
 
-  public void toUpperTriangle() {
-    for (int col = 0; col < getColLength(); col++) {
-      for (int rowBelow = col + 1; rowBelow < getRowLength(); rowBelow++) {
-        if (Math.abs(this.mat[rowBelow][col]) > EPSILON_IMPRECISION) {
-          double multiplier = (-1) * this.mat[rowBelow][col] / this.mat[col][col];
-          doRowOperation(col, rowBelow, multiplier);
+  /**
+   * Converts to upper triangle, returns the number of swaps done
+   * @return
+   */
+  public int toUpperTriangle() {
+    Coordinate pivot = getPivot(0);
+    int curLead = pivot.getCol();
+    int swaps = 0;
+    for (int row = 0; row < getRowLength() - 1; row++) {
+      if (curLead < VAL_UNDEF) {
+        if (pivot.getRow() != row) {
+          swapRow(pivot.getRow(), row);
+          swaps += 1;
+        }
+
+        for (int xrow = row + 1; xrow < getRowLength(); xrow++) {
+          int nextLead = getLeadingCoeffIdx(xrow);
+          if (curLead == nextLead) {
+            double multiplier = (-1) * this.mat[xrow][curLead] / this.mat[row][curLead];
+            doRowOperation(row, xrow, multiplier);
+          }
         }
       }
+      pivot = getPivot(row + 1);
+      curLead = pivot.getCol();
     }
+    return swaps;
   }
 
-  public double getDeterminantWithTriangle() {
+  public int toLowerTriangle() {
+    Coordinate pivot = getPivotReverse(getRowLastIdx());
+    int curLead = pivot.getCol();
+    int swaps = 0;
+    for (int row = getRowLastIdx(); row > 0; row--) {
+      if (curLead < VAL_UNDEF) {
+        if (pivot.getRow() != row) {
+          swapRow(pivot.getRow(), row);
+          swaps += 1;
+        }
+
+        for (int xrow = row - 1; xrow >= 0; xrow--) {
+          int nextLead = getTrailingCoeffIdx(xrow);
+          if (curLead == nextLead) {
+            double multiplier = (-1) * this.mat[xrow][curLead] / this.mat[row][curLead];
+            doRowOperation(row, xrow, multiplier);
+          }
+        }
+      }
+      pivot = getPivotReverse(row - 1);
+      curLead = pivot.getCol();
+    }
+    return swaps;
+  }
+
+  public double getDeterminantWithTriangle(boolean isUpper) {
     if (!this.isSquare()) {
       return this.VAL_UNDEF;
     }
     Matrix copy = this.copyMatrix();
-    copy.toUpperTriangle();
-    copy.writeMatrix();
-    float determinant = 1;
+    int swaps;
+    if (isUpper) {
+      swaps = copy.toUpperTriangle();
+    } else {
+      swaps = copy.toLowerTriangle();
+    }
+    double determinant = Math.pow(-1, swaps);
     for (int row = 0; row < getRowLength(); row++) {
       determinant *= copy.getMatrixElement(row, row);
     }
@@ -402,7 +486,8 @@ public class Matrix {
   }
 
   public Matrix getInverse() {
-    if (!isSquare() || getDeterminantWithTriangle() == 0) {
+    if (!isSquare() || getDeterminantWithTriangle(true) == 0) {
+      System.out.println("Matriks tidak mempunyai invers!");
       return new Matrix(0, 0, false, this.scanner);
     }
     Matrix copy = this.copyMatrix();
@@ -441,6 +526,10 @@ public class Matrix {
   }
 
   public Matrix getInverseWithAdjoin() {
+    if (!isSquare() || getDeterminantWithTriangle(true) == 0) {
+      System.out.println("Matriks tidak mempunyai invers!");
+      return new Matrix(0, 0, false, this.scanner);
+    }
     double determinant = this.getDetWithCofactor();
     Matrix adjoin = this.getAdjoin();
     for (int i = 0; i < adjoin.getRowLength(); i++) {

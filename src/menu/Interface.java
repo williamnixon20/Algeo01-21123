@@ -50,15 +50,21 @@ public class Interface {
                     Matrix baru = new Matrix(row, col, true, scanner);
                     baru.readMatrix();
                     baru.writeMatrix();
-                    System.out.printf("Determinan matriks: %.2f dan lewat metode segitiga %.2f\n",
-                            baru.getDetWithCofactor(), baru.getDeterminantWithTriangle());
+                    System.out.printf("Determinan matriks: %.2f dan lewat metode segitiga %.2f %.2f\n",
+                            baru.getDetWithCofactor(), baru.getDeterminantWithTriangle(true), baru.getDeterminantWithTriangle(false));
                     System.out.println("Matriks inversnya");
                     baru.getInverse().writeMatrix();
                     baru.getInverseWithAdjoin().writeMatrix();
+                    System.out.print("Masukkan panjang baris: ");
+                    row = this.scanner.nextInt();
+                    System.out.print("Masukkan panjang kolom: ");
+                    col = this.scanner.nextShort();
+
+                    Matrix baru2 = new Matrix(row, col, true, scanner);
+                    baru2.readMatrix();
+                    baru.multiplyMatrix(baru2).writeMatrix();
                     // baru.toRREF();
                     // baru.writeMatrix();
-                    baru.toRREF();
-                    baru.writeMatrix();
                     break;
                 case 2:
                     if (fileReader.setFileName(scanner)) {
