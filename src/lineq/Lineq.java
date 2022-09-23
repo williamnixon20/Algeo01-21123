@@ -59,6 +59,14 @@ public class Lineq {
       System.out.println("SPL tidak memiliki solusi.");
     else {
       for (int i = 0; i < temp.size(); i++) {
+        System.out.printf("%d\n", i);
+        if (temp.get(i) == null) {
+          ArrayList<Expression> newTemp = new ArrayList<Expression>();
+          Expression newExp = new Expression(false, 1, String.valueOf((char) cntParam));
+          cntParam++;
+          newTemp.add(newExp);
+          temp.put(i, newTemp);
+        }
         for (int j = 0; j < temp.get(i).size(); j++) {
           for (int k = j + 1; k < temp.get(i).size(); k++) {
             if (temp.get(i).get(j).getIsNumber()
