@@ -22,7 +22,7 @@ public class Matrix {
    * 
    * @param row     Dimensi baris yang ingin dimiliki matriks
    * @param col     Dimensi kolom yang ingin dimiliki matriks
-   * @param isValid 
+   * @param isValid
    * @param scanner Scanner u/matriks
    */
   public Matrix(int row, int col, boolean isValid, Scanner scanner) {
@@ -65,6 +65,7 @@ public class Matrix {
 
   /**
    * Menimpa element pada index [row][col] dengan value
+   * 
    * @param row
    * @param col
    * @param value
@@ -75,6 +76,7 @@ public class Matrix {
 
   /**
    * Menimpa element pada index [row][col] dengan value
+   * 
    * @param row
    * @param col
    */
@@ -101,6 +103,7 @@ public class Matrix {
       }
     }
   }
+
   /**
    * Menulis matriks ke layar
    */
@@ -226,7 +229,6 @@ public class Matrix {
     return pivot;
   }
 
-
   public void toREF() {
     Coordinate pivot = getPivot(0);
     int curLead = pivot.getCol();
@@ -256,6 +258,7 @@ public class Matrix {
       multiplyRow(getRowLastIdx(), 1 / this.mat[getRowLastIdx()][curLead]);
     }
   }
+
   /**
    * Mengubah matriks menjadi bentuk Eselon Baris Tereduksi
    */
@@ -286,7 +289,7 @@ public class Matrix {
         }
 
         if (this.mat[row][curLead] != 1) {
-          double value = 1 / this.mat[row][curLead]; 
+          double value = 1 / this.mat[row][curLead];
           multiplyRow(row, value);
           inverse.multiplyRow(row, value);
         }
@@ -295,6 +298,7 @@ public class Matrix {
           int nextLead = getLeadingCoeffIdx(xrow);
           if (curLead == nextLead) {
             double multiplier = (-1) * this.mat[xrow][curLead] / this.mat[row][curLead];
+            System.out.print("Multiplying row " + xrow + " with " + multiplier);
             doRowOperation(row, xrow, multiplier);
             inverse.doRowOperation(row, xrow, multiplier);
           }
@@ -338,7 +342,6 @@ public class Matrix {
     }
   }
 
-
   public double getDeterminantWithTriangle() {
     if (!this.isSquare()) {
       return this.VAL_UNDEF;
@@ -349,9 +352,10 @@ public class Matrix {
     float determinant = 1;
     for (int row = 0; row < getRowLength(); row++) {
       determinant *= copy.getMatrixElement(row, row);
-    }   
+    }
     return determinant;
   }
+
   /**
    * 
    * @param refRow baris yang akan dihilangkan dalam perhitungan
@@ -379,6 +383,9 @@ public class Matrix {
    * @return determinan Matriks dengan metode kofaktor
    */
   public double getDetWithCofactor() {
+    if (!this.isSquare()) {
+      return this.VAL_UNDEF;
+    }
     double det = 0;
     int row = 0;
     if (getRowLength() == 1) {
@@ -397,8 +404,8 @@ public class Matrix {
   public Matrix getInverse() {
     if (!isSquare() || getDeterminantWithTriangle() == 0) {
       return new Matrix(0, 0, false, this.scanner);
-    } 
-    Matrix copy = this.copyMatrix();    
+    }
+    Matrix copy = this.copyMatrix();
     Matrix Inverse = new Matrix(this.rowEff, this.colEff, true, this.scanner);
     Inverse.makeIdentity();
     copy.toRREFWithInverse(Inverse);
@@ -420,12 +427,13 @@ public class Matrix {
     Matrix mOut = new Matrix(this.colEff, this.rowEff, true, this.scanner);
     int i, j;
     for (i = 0; i < mOut.getRowLength(); i++) {
-        for (j = 0; j < mOut.getColLength(); j++) {
-            mOut.setMatrixElement(i, j, this.getMatrixElement(j, i));
-        }
+      for (j = 0; j < mOut.getColLength(); j++) {
+        mOut.setMatrixElement(i, j, this.getMatrixElement(j, i));
+      }
     }
     return mOut;
   }
+
   public Matrix getAdjoin() {
     Matrix kofaktor = this.getMatrixCofactor();
     Matrix adjoin = kofaktor.tranpose();
@@ -436,7 +444,7 @@ public class Matrix {
     double determinant = this.getDetWithCofactor();
     Matrix adjoin = this.getAdjoin();
     for (int i = 0; i < adjoin.getRowLength(); i++) {
-      adjoin.multiplyRow(i, 1/determinant);
+      adjoin.multiplyRow(i, 1 / determinant);
     }
     return adjoin;
   }
