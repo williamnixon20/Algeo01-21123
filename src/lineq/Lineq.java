@@ -113,4 +113,33 @@ public class Lineq {
       }
     }
   }
+
+  public void doCramer(Matrix m) {
+    Matrix matrixA = m.getMatrixAFromAugmented();
+    Matrix matrixB = m.getMatrixBFromAugmented();
+    double determinantA = matrixA.getDetWithCofactor();
+
+    if (Math.abs(determinantA) < m.EPSILON_IMPRECISION) {
+      System.out.println("Determinan matriks 0 sehingga tidak dapat diperoleh solusinya lewat metode Cramer.");
+    } else if (!matrixA.isSquare()) {
+      System.out.println("Determinan matriks u/ metode cramer tidak terdefinisi karena bukan persegi.");
+    } else {
+      for (int col = 0; col < matrixA.getColLength(); col++) {
+        Matrix substitute = matrixA.substituteCramer(matrixB, col);
+        double determinantX = substitute.getDetWithCofactor();
+        System.out.printf("X%d: %.2f\n", col, determinantX/determinantA);
+      }
+    }
+  }
+
+  public void doInverse(Matrix m) {
+    Matrix inverse = m.getMatrixAFromAugmented().getInverse();
+    Matrix matrixB = m.getMatrixBFromAugmented();
+    if (inverse.getValidity()) {
+      Matrix solution = inverse.multiplyMatrix(matrixB);
+      solution.displaySolution();      
+    } else {
+      System.out.println("Matrix tidak punya invers (singular) sehingga tidak bisa diperoleh solusinya lewat metode invers.");
+    }
+  }
 }

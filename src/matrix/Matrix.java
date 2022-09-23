@@ -63,6 +63,10 @@ public class Matrix {
     return this.colEff;
   }
 
+  public boolean getValidity() {
+    return this.isValid;
+  }
+
   /**
    * Menimpa element pada index [row][col] dengan value
    * 
@@ -123,6 +127,12 @@ public class Matrix {
     }
   }
 
+  public void displaySolution() {
+    for (int i = 0; i < this.rowEff; i++) {
+      System.out.printf("X%d %.2f\n", i, getMatrixElement(i, 0));
+    }
+  }
+
   public Matrix copyMatrix() {
     Matrix baru = new Matrix(this.rowEff, this.colEff, true, this.scanner);
     for (int i = 0; i < this.rowEff; i++) {
@@ -130,6 +140,24 @@ public class Matrix {
         baru.setMatrixElement(i, j, this.mat[i][j]);
       }
     }
+    return baru;
+  }
+
+  public Matrix getMatrixAFromAugmented() {
+    Matrix baru = new Matrix(this.rowEff, this.colEff-1, true, this.scanner);
+    for (int i = 0; i < this.rowEff; i++) {
+      for (int j = 0; j < this.colEff-1; j++) {
+        baru.setMatrixElement(i, j, this.mat[i][j]);
+      }
+    }
+    return baru;
+  }
+
+  public Matrix getMatrixBFromAugmented() {
+    Matrix baru = new Matrix(this.rowEff, 1, true, this.scanner);
+    for (int i = 0; i < this.rowEff; i++) {
+        baru.setMatrixElement(i, 0, this.mat[i][this.colEff-1]);
+      }
     return baru;
   }
 
@@ -486,7 +514,7 @@ public class Matrix {
   }
 
   public Matrix getInverse() {
-    if (!isSquare() || getDeterminantWithTriangle(true) == 0) {
+    if (!isSquare() || Math.abs(getDetWithCofactor()) < EPSILON_IMPRECISION || getDetWithCofactor() == VAL_UNDEF) {
       System.out.println("Matriks tidak mempunyai invers!");
       return new Matrix(0, 0, false, this.scanner);
     }
@@ -526,7 +554,7 @@ public class Matrix {
   }
 
   public Matrix getInverseWithAdjoin() {
-    if (!isSquare() || getDeterminantWithTriangle(true) == 0) {
+    if (!isSquare() || Math.abs(getDetWithCofactor()) < EPSILON_IMPRECISION || getDetWithCofactor() == VAL_UNDEF) {
       System.out.println("Matriks tidak mempunyai invers!");
       return new Matrix(0, 0, false, this.scanner);
     }
@@ -536,5 +564,13 @@ public class Matrix {
       adjoin.multiplyRow(i, 1 / determinant);
     }
     return adjoin;
+  }
+  
+  public Matrix substituteCramer(Matrix vector, int kolom) {
+    Matrix baru = this.copyMatrix();
+    for (int baris = 0; baris < this.rowEff; baris++) {
+      baru.setMatrixElement(baris, kolom, vector.getMatrixElement(baris, 0));
+    }
+    return baru;
   }
 }

@@ -21,8 +21,25 @@ public class Interface {
         System.out.println("1. Input dari keyboard & Display Matriks");
         System.out.println("2. Input dari file & Display Matriks");
         System.out.println("3. Input points dari file");
-        System.out.println("4. Gauss");
+        System.out.println("4. SPL");
         System.out.println("5. Keluar\n==============");
+
+        System.out.print("Masukan: ");
+
+        result = this.scanner.nextInt();
+
+        return result;
+    }
+    
+    private int splMenu() {
+        int result = 0;
+
+        System.out.println("\nSilakan pilih metode yang anda inginkan");
+        System.out.println("1. Gauss");
+        System.out.println("2. Gauss-Jordan");
+        System.out.println("3. Cramer");
+        System.out.println("4. Invers");
+        System.out.println("5. Kembali\n==============");
 
         System.out.print("Masukan: ");
 
@@ -83,12 +100,28 @@ public class Interface {
                     }
                     break;
                 case 4:
+                    int splChoice = this.splMenu();
+                    if (splChoice == 5) break;
+
+                    Matrix m;
                     if (fileReader.setFileName(scanner)) {
-                        Matrix m = fileReader.readMatrix();
-                        Lineq leq = new Lineq();
-                        leq.Gauss(m);
+                        m = fileReader.readMatrix();
                     } else {
                         System.out.println("File tidak ditemukan.");
+                        break;
+                    }
+                    Lineq leq = new Lineq();
+                    switch (splChoice){
+                        case 1:
+                            leq.Gauss(m);
+                            break;
+                        case 2:
+                        case 3:
+                            leq.doCramer(m);
+                            break;
+                        case 4: 
+                            leq.doInverse(m);
+                            break;
                     }
                     break;
                 case 5:
