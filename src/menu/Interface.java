@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 import io.FileReader;
+import io.FileTulis;
 import lineq.Lineq;
 import point.*;
 import matrix.*;
@@ -13,6 +14,7 @@ import matrix.expression.Expression;
 
 public class Interface {
     private Scanner scanner;
+    private FileTulis fileWriter;
 
     private int mainMenu() {
         int result = 0;
@@ -47,6 +49,31 @@ public class Interface {
 
         return result;
     }
+    
+    private int writeMenu() {
+        int result = 0;
+
+        System.out.println("Apakah anda ingin menuliskan hasil ke file?");
+        System.out.println("1. Ya");
+        System.out.println("2. Tidak");
+
+        System.out.print("Masukan: ");
+
+        result = this.scanner.nextInt();
+
+        return result;
+    }
+
+    private String writeNameMenu() {
+        String result;
+
+        System.out.println("Nama filenya apa (xxxx.txt)? (akan ditulis di /test/output)");
+        System.out.print("Masukan: ");
+
+        result = this.scanner.next();
+
+        return result;
+    }
 
     public void start(Scanner scanner) throws IOException {
         this.scanner = scanner;
@@ -56,6 +83,14 @@ public class Interface {
         while (active) {
             FileReader fileReader = new FileReader();
             int menuChoice = this.mainMenu();
+            int writeChoice = 2;
+            if (menuChoice != 5) {
+                writeChoice = this.writeMenu();
+            }
+            if (writeChoice == 1 && menuChoice != 5) {
+                String fileName = this.writeNameMenu();
+                this.fileWriter = new FileTulis(fileName);
+            }
             switch (menuChoice) {
                 case 1:
                     int row, col;
@@ -113,9 +148,11 @@ public class Interface {
                     Lineq leq = new Lineq();
                     switch (splChoice){
                         case 1:
-                            leq.Gauss(m);
+                            leq.Gauss(m, writeChoice, this.fileWriter);
                             break;
                         case 2:
+                            leq.GaussJordan(m, writeChoice, this.fileWriter);
+                            break;
                         case 3:
                             leq.doCramer(m);
                             break;
@@ -130,6 +167,10 @@ public class Interface {
                 default:
                     System.out.println("Opsi tidak tersedia.");
                     break;
+            }
+            if (writeChoice == 1) {
+                System.out.println("Output telah tertulis di file.");
+                this.fileWriter.closeFile();
             }
         }
     }
