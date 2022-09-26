@@ -8,6 +8,7 @@ import java.util.Scanner;
 import io.FileReader;
 import io.FileTulis;
 import lineq.Lineq;
+import regression.MultiLinearReg;
 import point.*;
 import matrix.*;
 import matrix.expression.Expression;
@@ -24,7 +25,8 @@ public class Interface {
         System.out.println("2. Input dari file & Display Matriks");
         System.out.println("3. Input points dari file");
         System.out.println("4. SPL");
-        System.out.println("5. Keluar\n==============");
+        System.out.println("5. Regresi Linier Berganda");
+        System.out.println("6. Keluar\n==============");
 
         System.out.print("Masukan: ");
 
@@ -32,7 +34,7 @@ public class Interface {
 
         return result;
     }
-    
+
     private int splMenu() {
         int result = 0;
 
@@ -49,7 +51,7 @@ public class Interface {
 
         return result;
     }
-    
+
     private int writeMenu() {
         int result = 0;
 
@@ -103,7 +105,8 @@ public class Interface {
                     baru.readMatrix();
                     baru.writeMatrix();
                     System.out.printf("Determinan matriks: %.2f dan lewat metode segitiga %.2f %.2f\n",
-                            baru.getDetWithCofactor(), baru.getDeterminantWithTriangle(true), baru.getDeterminantWithTriangle(false));
+                            baru.getDetWithCofactor(), baru.getDeterminantWithTriangle(true),
+                            baru.getDeterminantWithTriangle(false));
                     System.out.println("Matriks inversnya");
                     baru.getInverse().writeMatrix();
                     baru.getInverseWithAdjoin().writeMatrix();
@@ -136,7 +139,8 @@ public class Interface {
                     break;
                 case 4:
                     int splChoice = this.splMenu();
-                    if (splChoice == 5) break;
+                    if (splChoice == 5)
+                        break;
 
                     Matrix m;
                     if (fileReader.setFileName(scanner)) {
@@ -146,7 +150,7 @@ public class Interface {
                         break;
                     }
                     Lineq leq = new Lineq();
-                    switch (splChoice){
+                    switch (splChoice) {
                         case 1:
                             leq.Gauss(m, writeChoice, this.fileWriter);
                             break;
@@ -156,12 +160,34 @@ public class Interface {
                         case 3:
                             leq.doCramer(m);
                             break;
-                        case 4: 
+                        case 4:
                             leq.doInverse(m);
                             break;
                     }
                     break;
                 case 5:
+                    Matrix data;
+                    if (fileReader.setFileName(scanner)) {
+                        data = fileReader.readMatrix();
+                    } else {
+                        System.out.println("File tidak ditemukan.");
+                        break;
+                    }
+
+                    MultiLinearReg mlr = new MultiLinearReg();
+
+                    double[] refData = new double[data.getColLength() - 1];
+
+                    System.out.println("Masukkan data yang akan diestimasi nilainya: ");
+                    for (int i = 0; i < refData.length; i++) {
+                        refData[i] = scanner.nextDouble();
+                    }
+
+                    double estimatedValue = mlr.getEstimatedValue(data, refData, scanner);
+
+                    System.out.printf("Estimasi nilai: %.2f\n", estimatedValue);
+                    break;
+                case 6:
                     active = false;
                     break;
                 default:
