@@ -4,6 +4,23 @@ import java.util.Scanner;
 import matrix.Matrix;
 
 public class MultiLinearReg {
+
+    /**
+     * Melakukan multiple linear regression untuk mencari estimasi nilai
+     */
+    public void doMultiLinearReg(Matrix data, Scanner scanner) {
+        double[] refData = new double[data.getColLength() - 1];
+
+        System.out.println("\nMasukkan data yang akan diestimasi nilainya: ");
+        for (int i = 0; i < refData.length; i++) {
+            refData[i] = scanner.nextDouble();
+        }
+
+        double estimatedValue = getEstimatedValue(data, refData, scanner);
+
+        System.out.printf("Estimasi nilai: %.2f\n", estimatedValue);
+    }
+
     /**
      * Mendapatkan sigma dari xk * xi
      * 

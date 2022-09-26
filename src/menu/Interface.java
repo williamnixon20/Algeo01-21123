@@ -66,6 +66,22 @@ public class Interface {
         return result;
     }
 
+    private int mlrMenu() {
+        int result = 0;
+
+        System.out.println("\nSilahkan pilih metode input data:");
+        System.out.println("1. Input dari keyboard");
+        System.out.println("2. Input dari file");
+
+        System.out.println("3. Kembali\n==============");
+
+        System.out.print("Masukan: ");
+
+        result = this.scanner.nextInt();
+
+        return result;
+    }
+
     private String writeNameMenu() {
         String result;
 
@@ -167,25 +183,40 @@ public class Interface {
                     break;
                 case 5:
                     Matrix data;
-                    if (fileReader.setFileName(scanner)) {
-                        data = fileReader.readMatrix();
-                    } else {
-                        System.out.println("File tidak ditemukan.");
-                        break;
-                    }
-
                     MultiLinearReg mlr = new MultiLinearReg();
 
-                    double[] refData = new double[data.getColLength() - 1];
+                    int mlrChoice = mlrMenu();
 
-                    System.out.println("Masukkan data yang akan diestimasi nilainya: ");
-                    for (int i = 0; i < refData.length; i++) {
-                        refData[i] = scanner.nextDouble();
+                    switch (mlrChoice) {
+                        case 1:
+                            int varCount, sampleCount;
+
+                            System.out.print("Masukkan banyak variabel: "); // variabel x
+                            varCount = scanner.nextInt();
+                            System.out.print("Masukkan banyak sample: ");
+                            sampleCount = scanner.nextInt();
+
+                            data = new Matrix(sampleCount, varCount + 1, true, scanner);
+
+                            data.readMatrix();
+
+                            mlr.doMultiLinearReg(data, scanner);
+
+                            break;
+                        case 2:
+                            if (fileReader.setFileName(scanner)) {
+                                data = fileReader.readMatrix();
+                            } else {
+                                System.out.println("File tidak ditemukan.");
+                                break;
+                            }
+
+                            mlr.doMultiLinearReg(data, scanner);
+                            break;
+                        case 3:
+                            break;
                     }
 
-                    double estimatedValue = mlr.getEstimatedValue(data, refData, scanner);
-
-                    System.out.printf("Estimasi nilai: %.2f\n", estimatedValue);
                     break;
                 case 6:
                     active = false;
