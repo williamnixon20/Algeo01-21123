@@ -1,6 +1,7 @@
 package matrix.expression;
 
 public class Expression {
+  private static final double EPSILON_IMPRECISION = 0.0001;
   private boolean isNumber;
   private double number;
   private String var;
@@ -35,4 +36,27 @@ public class Expression {
     this.number *= constant;
   }
 
+  public boolean addExpression(Expression b) {
+    if (this.isNumber == true && b.isNumber == true) {
+      this.number += b.getNumber();
+      return true;
+    }
+    if (this.isNumber == false && b.isNumber == false) {
+      if (b.var.equals(this.var)) {
+        this.number += b.getNumber();
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public void displayExpression() {
+    if (this.number < 0) System.out.printf("(");
+    if (this.isNumber) {
+      System.out.printf("%.2f", this.number, this.isNumber);  
+    } else {
+      System.out.printf("%.2f%s", this.number, this.var);
+    }
+    if (this.number < 0) System.out.printf(")");
+  }
 }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import interpolation.PolinomInterpolation;
 import io.FileReader;
 import io.FileTulis;
 import lineq.Lineq;
@@ -26,7 +27,8 @@ public class Interface {
         System.out.println("3. Input points dari file");
         System.out.println("4. SPL");
         System.out.println("5. Regresi Linier Berganda");
-        System.out.println("6. Keluar\n==============");
+        System.out.println("6. Interpolasi Polinom");
+        System.out.println("7. Keluar\n==============");
 
         System.out.print("Masukan: ");
 
@@ -102,13 +104,13 @@ public class Interface {
             FileReader fileReader = new FileReader();
             int menuChoice = this.mainMenu();
             int writeChoice = 2;
-            if (menuChoice != 5) {
-                writeChoice = this.writeMenu();
-            }
-            if (writeChoice == 1 && menuChoice != 5) {
-                String fileName = this.writeNameMenu();
-                this.fileWriter = new FileTulis(fileName);
-            }
+            // if (menuChoice != 7) {
+            //     writeChoice = this.writeMenu();
+            // }
+            // if (writeChoice == 1) {
+            //     String fileName = this.writeNameMenu();
+            //     this.fileWriter = new FileTulis(fileName);
+            // }
             switch (menuChoice) {
                 case 1:
                     int row, col;
@@ -120,12 +122,12 @@ public class Interface {
                     Matrix baru = new Matrix(row, col, true, scanner);
                     baru.readMatrix();
                     baru.writeMatrix();
-                    System.out.printf("Determinan matriks: %.2f dan lewat metode segitiga %.2f %.2f\n",
-                            baru.getDetWithCofactor(), baru.getDeterminantWithTriangle(true),
-                            baru.getDeterminantWithTriangle(false));
+                    // System.out.printf("Determinan matriks: %.2f dan lewat metode segitiga %.2f %.2f\n",
+                    //         baru.getDetWithCofactor(), baru.getDeterminantWithTriangle(true),
+                    //         baru.getDeterminantWithTriangle(false));
                     System.out.println("Matriks inversnya");
                     baru.getInverse().writeMatrix();
-                    baru.getInverseWithAdjoin().writeMatrix();
+                    // baru.getInverseWithAdjoin().writeMatrix();
                     System.out.print("Masukkan panjang baris: ");
                     row = this.scanner.nextInt();
                     System.out.print("Masukkan panjang kolom: ");
@@ -219,6 +221,9 @@ public class Interface {
 
                     break;
                 case 6:
+                    PolinomInterpolation Interpol = new PolinomInterpolation(this.scanner);
+                    Interpol.readPointsKeyboard();
+                case 7:
                     active = false;
                     break;
                 default:
