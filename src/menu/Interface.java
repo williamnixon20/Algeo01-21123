@@ -102,10 +102,10 @@ public class Interface {
             FileReader fileReader = new FileReader();
             int menuChoice = this.mainMenu();
             int writeChoice = 2;
-            if (menuChoice != 5) {
+            if (menuChoice != 6) {
                 writeChoice = this.writeMenu();
             }
-            if (writeChoice == 1 && menuChoice != 5) {
+            if (writeChoice == 1 && menuChoice != 6) {
                 String fileName = this.writeNameMenu();
                 this.fileWriter = new FileTulis(fileName);
             }
@@ -200,18 +200,18 @@ public class Interface {
 
                             data.readMatrix();
 
-                            mlr.doMultiLinearReg(data, scanner);
+                            mlr.doMultiLinearReg(data, scanner, writeChoice, this.fileWriter);
 
                             break;
                         case 2:
                             if (fileReader.setFileName(scanner)) {
                                 data = fileReader.readMatrix();
+                                mlr.doMultiLinearReg(data, scanner, writeChoice, this.fileWriter);
                             } else {
                                 System.out.println("File tidak ditemukan.");
                                 break;
                             }
 
-                            mlr.doMultiLinearReg(data, scanner);
                             break;
                         case 3:
                             break;
@@ -226,7 +226,7 @@ public class Interface {
                     break;
             }
             if (writeChoice == 1) {
-                System.out.println("Output telah tertulis di file.");
+                System.out.println("\nOutput telah tertulis di file.");
                 this.fileWriter.closeFile();
             }
         }
