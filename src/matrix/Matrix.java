@@ -150,9 +150,9 @@ public class Matrix {
   }
 
   public Matrix getMatrixAFromAugmented() {
-    Matrix baru = new Matrix(this.rowEff, this.colEff-1, true, this.scanner);
+    Matrix baru = new Matrix(this.rowEff, this.colEff - 1, true, this.scanner);
     for (int i = 0; i < this.rowEff; i++) {
-      for (int j = 0; j < this.colEff-1; j++) {
+      for (int j = 0; j < this.colEff - 1; j++) {
         baru.setMatrixElement(i, j, this.mat[i][j]);
       }
     }
@@ -162,8 +162,8 @@ public class Matrix {
   public Matrix getMatrixBFromAugmented() {
     Matrix baru = new Matrix(this.rowEff, 1, true, this.scanner);
     for (int i = 0; i < this.rowEff; i++) {
-        baru.setMatrixElement(i, 0, this.mat[i][this.colEff-1]);
-      }
+      baru.setMatrixElement(i, 0, this.mat[i][this.colEff - 1]);
+    }
     return baru;
   }
 
@@ -233,20 +233,20 @@ public class Matrix {
     // 2x3 x 3,2
     Matrix val = new Matrix(this.getRowLength(), m2.getColLength(), true, this.scanner);
     for (int i = 0; i < val.getRowLength(); i++) {
-        for (int j = 0; j < val.getColLength(); j++) {
-            for (int k = 0; k < m2.getRowLength(); k++) {
-                double currVal = val.getMatrixElement(i, j);
-                double addition = this.getMatrixElement(i, k) * m2.getMatrixElement(k, j);
-                val.setMatrixElement(i, j, currVal + addition);
-            }
+      for (int j = 0; j < val.getColLength(); j++) {
+        for (int k = 0; k < m2.getRowLength(); k++) {
+          double currVal = val.getMatrixElement(i, j);
+          double addition = this.getMatrixElement(i, k) * m2.getMatrixElement(k, j);
+          val.setMatrixElement(i, j, currVal + addition);
         }
+      }
     }
     return val;
-};
+  };
 
   /**
    * @param row indeks baris yang akan dicari indeks letak leading koefisiennya
-   * @return indeks kolom dari leading koefisiennya,  jika
+   * @return indeks kolom dari leading koefisiennya, jika
    *         baris nol semua
    */
   public int getLeadingCoeffIdx(int row) {
@@ -404,6 +404,7 @@ public class Matrix {
 
   /**
    * Converts to upper triangle, returns the number of swaps done
+   * 
    * @return
    */
   public int toUpperTriangle() {
@@ -571,7 +572,7 @@ public class Matrix {
     }
     return adjoin;
   }
-  
+
   public Matrix substituteCramer(Matrix vector, int kolom) {
     Matrix baru = this.copyMatrix();
     for (int baris = 0; baris < this.rowEff; baris++) {

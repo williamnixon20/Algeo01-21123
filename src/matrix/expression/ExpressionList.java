@@ -10,24 +10,28 @@ public class ExpressionList {
 
     }
 
+    public Expression getVariable(int index) {
+        return variables.get(index);
+    }
+
     public void addExpression(boolean isNumber, double number, String var) {
         Expression variable = new Expression(isNumber, number, var);
         this.variables.add(variable);
     }
 
     public void addAndSubstitute(double multiplier, ExpressionList substituent) {
-        for (Expression e: substituent.variables) {
-            Expression multiplied = new Expression(e.getIsNumber(), e.getNumber()*multiplier, e.getVar());
+        for (Expression e : substituent.variables) {
+            Expression multiplied = new Expression(e.getIsNumber(), e.getNumber() * multiplier, e.getVar());
             if (Math.abs(multiplied.getNumber()) > EPSILON_IMPRECISION) {
                 this.variables.add(multiplied);
             }
-        }        
+        }
     }
 
     public void simplify() {
         for (int i = 0; i < variables.size(); i++) {
-            //  this.print();
-            for (int j = i+1; j < variables.size(); j++) {
+            // this.print();
+            for (int j = i + 1; j < variables.size(); j++) {
                 if (variables.get(i) != null && variables.get(j) != null) {
                     // System.out.println("Currently at" );
                     // variables.get(i).displayExpression();
@@ -39,7 +43,7 @@ public class ExpressionList {
                             variables.remove(i);
                             break;
                         }
-                        j-=1;
+                        j -= 1;
                     }
                 }
             }
@@ -53,7 +57,7 @@ public class ExpressionList {
 
     public void print() {
         boolean isFirst = true;
-        for (Expression e: this.variables) {
+        for (Expression e : this.variables) {
             if (!isFirst) {
                 if (Math.abs(e.getNumber()) > EPSILON_IMPRECISION) {
                     System.out.printf(" + ");
@@ -63,7 +67,7 @@ public class ExpressionList {
             }
             isFirst = false;
             e.displayExpression();
-        }      
+        }
     }
 
     public double getFirstDouble() {

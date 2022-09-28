@@ -104,13 +104,13 @@ public class Interface {
             FileReader fileReader = new FileReader();
             int menuChoice = this.mainMenu();
             int writeChoice = 2;
-            // if (menuChoice != 7) {
-            //     writeChoice = this.writeMenu();
-            // }
-            // if (writeChoice == 1) {
-            //     String fileName = this.writeNameMenu();
-            //     this.fileWriter = new FileTulis(fileName);
-            // }
+            if (menuChoice != 7) {
+                writeChoice = this.writeMenu();
+            }
+            if (writeChoice == 1) {
+                String fileName = this.writeNameMenu();
+                this.fileWriter = new FileTulis(fileName);
+            }
             switch (menuChoice) {
                 case 1:
                     int row, col;
@@ -122,9 +122,10 @@ public class Interface {
                     Matrix baru = new Matrix(row, col, true, scanner);
                     baru.readMatrix();
                     baru.writeMatrix();
-                    // System.out.printf("Determinan matriks: %.2f dan lewat metode segitiga %.2f %.2f\n",
-                    //         baru.getDetWithCofactor(), baru.getDeterminantWithTriangle(true),
-                    //         baru.getDeterminantWithTriangle(false));
+                    // System.out.printf("Determinan matriks: %.2f dan lewat metode segitiga %.2f
+                    // %.2f\n",
+                    // baru.getDetWithCofactor(), baru.getDeterminantWithTriangle(true),
+                    // baru.getDeterminantWithTriangle(false));
                     System.out.println("Matriks inversnya");
                     baru.getInverse().writeMatrix();
                     // baru.getInverseWithAdjoin().writeMatrix();
@@ -172,10 +173,10 @@ public class Interface {
                     Lineq leq = new Lineq();
                     switch (splChoice) {
                         case 1:
-                            leq.Gauss(m, writeChoice, this.fileWriter);
+                            leq.displaySolution(leq.Gauss(m), writeChoice, fileWriter);
                             break;
                         case 2:
-                            leq.GaussJordan(m, writeChoice, this.fileWriter);
+                            leq.displaySolution(leq.GaussJordan(m), writeChoice, fileWriter);
                             break;
                         case 3:
                             leq.doCramer(m);
