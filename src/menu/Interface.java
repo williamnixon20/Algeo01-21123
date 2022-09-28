@@ -108,8 +108,12 @@ public class Interface {
                 writeChoice = this.writeMenu();
             }
             if (writeChoice == 1) {
-                String fileName = this.writeNameMenu();
-                this.fileWriter = new FileTulis(fileName);
+                try {
+                    String fileName = this.writeNameMenu();
+                    this.fileWriter = new FileTulis(fileName);
+                } catch (Exception e) {
+                    writeChoice = 1;
+                }
             }
             switch (menuChoice) {
                 case 1:
@@ -218,7 +222,7 @@ public class Interface {
                             }
 
                             break;
-                        case 3:
+                        default:
                             break;
                     }
 
@@ -227,6 +231,7 @@ public class Interface {
                     inputChoice = inputChoiceMenu();
                     Points p = new Points(1, false, scanner);
                     PolinomInterpolation polinom = new PolinomInterpolation(scanner);
+                    Boolean keluar = false;
                     switch(inputChoice) {
                         case 1:
                             p = polinom.readPointsKeyboard();
@@ -238,10 +243,13 @@ public class Interface {
                                 System.out.println("File tidak ditemukan.");
                             }
                             break;
+                        default:
+                            keluar = true;
                     }
+                    if (keluar) break;
                     polinom.setPoints(p);
                     polinom.setAugmented();
-                    polinom.solve();
+                    polinom.solve(inputChoice, writeChoice, fileWriter);
                     break;
                 case 7:
                     active = false;

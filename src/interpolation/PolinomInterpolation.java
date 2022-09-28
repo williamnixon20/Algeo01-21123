@@ -58,12 +58,24 @@ public class PolinomInterpolation {
     this.augmented = augmented;
   }
 
-  public void solve() {
+  public void solve(int inputChoice, int writeChoice, FileTulis fileWriter) {
     Lineq splSolver = new Lineq();
     HashMap<Integer, ExpressionList> solusi = splSolver.GaussJordan(this.augmented);
     this.solusi = turnExpressionToDouble(solusi);
-    displayAsFunction();
-    interpolateKeyboard();
+    displayAsFunction(writeChoice, fileWriter);
+    if (inputChoice == 1) {
+      interpolateKeyboard(writeChoice, fileWriter);
+    } else {
+      interpolateFile(writeChoice, fileWriter);
+    }
+  }
+
+  private void interpolateFile(int writeChoice, FileTulis fileWriter) {
+    ArrayList<Double> samples = points.getSamples();
+    for (double input : samples) {
+      double result = evaluateFunction(input);
+      displayAndWriteEval(input, result, writeChoice, fileWriter);
+    }
   }
 
   private HashMap<Integer, Double> turnExpressionToDouble(HashMap<Integer, ExpressionList> expresi) {
@@ -74,17 +86,21 @@ public class PolinomInterpolation {
     return valueMap;
   }
 
-  private void displayAsFunction() {
-    System.out.printf("f(x) = %.4f", this.solusi.get(0));
-    this.solusi.entrySet().forEach(entry -> {
-      if (entry.getKey() != 0) {
-        System.out.printf(" + %.4fx^%d", entry.getValue(), entry.getKey());
-      }
-    });
-    System.out.println("");
+  private void displayAsFunction(int writeChoice, FileTulis fileWriter) {
+    String hasil = "";
+    hasil += String.format("f(x) = %.4f", this.solusi.get(0));
+    for (HashMap.Entry<Integer, Double> entry : this.solusi.entrySet()) {
+      if (entry.getKey() == 0) continue;
+      hasil += String.format(" + %.4fx^%d", entry.getValue(), entry.getKey());
+    }
+    hasil += "\n";
+    System.out.print(hasil);
+    if (writeChoice == 1) {
+      fileWriter.writeFile(hasil);
+    }
   }
 
-  private void interpolateKeyboard() {
+  private void interpolateKeyboard(int writeChoice, FileTulis fileWriter) {
     System.out.println("Berapa banyak sampel interpolasi anda?");
     int samples = this.scanner.nextInt();
     System.out.println("Silahkan masukan " + samples + " buah sampel (x).");
@@ -92,8 +108,16 @@ public class PolinomInterpolation {
     for (int i = 0; i < samples; i++) {
       double input = this.scanner.nextDouble();
       double result = evaluateFunction(input);
-      System.out.printf("f(%.2f) = %.3f\n", input, result);
+      displayAndWriteEval(input, result, writeChoice, fileWriter);
     }
+  }
+
+  private void displayAndWriteEval(double input, double hasil, int writeChoice, FileTulis fileWriter) {
+      String row = String.format("f(%.2f) = %.3f\n", input, hasil);
+      System.out.print(row);
+      if (writeChoice == 1) {
+        fileWriter.writeFile(row);
+      }
   }
 
   private double evaluateFunction(double x) {

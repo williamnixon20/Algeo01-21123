@@ -38,6 +38,10 @@ public class Points {
     return this.colEff;
   }
 
+  public ArrayList<Double> getSamples() {
+    return this.samples;
+  }
+
   public void changePointsValidty(boolean isValid) {
     this.isValid = isValid;
   }
