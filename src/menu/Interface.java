@@ -183,10 +183,10 @@ public class Interface {
                             leq.displaySolution(leq.GaussJordan(m), writeChoice, fileWriter);
                             break;
                         case 3:
-                            leq.doCramer(m);
+                            leq.doCramer(m, writeChoice, fileWriter);
                             break;
                         case 4:
-                            leq.doInverse(m);
+                            leq.doInverse(m, writeChoice, fileWriter);
                             break;
                     }
                     break;

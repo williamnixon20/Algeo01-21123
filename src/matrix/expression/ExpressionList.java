@@ -55,19 +55,21 @@ public class ExpressionList {
         }
     }
 
-    public void print() {
+    public String getStringPrint() {
         boolean isFirst = true;
+        String row = "";
         for (Expression e : this.variables) {
             if (!isFirst) {
                 if (Math.abs(e.getNumber()) > EPSILON_IMPRECISION) {
-                    System.out.printf(" + ");
+                    row += " + ";
                 } else {
                     continue;
                 }
             }
             isFirst = false;
-            e.displayExpression();
+            row += e.getDisplayExpression();
         }
+        return row;
     }
 
     public double getFirstDouble() {

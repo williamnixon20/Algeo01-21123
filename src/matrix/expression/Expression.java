@@ -50,13 +50,15 @@ public class Expression {
     return false;
   }
 
-  public void displayExpression() {
-    if (this.number < 0) System.out.printf("(");
+  public String getDisplayExpression() {
+    String row = "";
+    if (this.number < 0) row +="(";
     if (this.isNumber) {
-      System.out.printf("%.2f", this.number, this.isNumber);  
+      row += String.format("%.2f", this.number);  
     } else {
-      System.out.printf("%.2f%s", this.number, this.var);
+      row += String.format("%.2f%s", this.number, this.var);
     }
-    if (this.number < 0) System.out.printf(")");
+    if (this.number < 0) row += ")";
+    return row;
   }
 }

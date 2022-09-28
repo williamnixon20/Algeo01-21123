@@ -133,12 +133,6 @@ public class Matrix {
     }
   }
 
-  public void displaySolution() {
-    for (int i = 0; i < this.rowEff; i++) {
-      System.out.printf("X%d %.2f\n", i, getMatrixElement(i, 0));
-    }
-  }
-
   public Matrix copyMatrix() {
     Matrix baru = new Matrix(this.rowEff, this.colEff, true, this.scanner);
     for (int i = 0; i < this.rowEff; i++) {

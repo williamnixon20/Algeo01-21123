@@ -2,6 +2,7 @@ package lineq;
 
 import java.util.HashMap;
 import java.lang.Math;
+import java.nio.file.attribute.FileOwnerAttributeView;
 
 import io.FileTulis;
 import matrix.Matrix;
@@ -87,14 +88,15 @@ public class Lineq {
         fileWriter.writeFile("SPL tidak memiliki solusi.");
       }
     } else {
-      expression.entrySet().forEach(entry -> {
+      String row = "";
+      for (HashMap.Entry<Integer, ExpressionList> entry : expression.entrySet()) {
         entry.getValue().simplify();
-        if (writeChoice == 2) {
-          System.out.printf("x%d : ", (entry.getKey() + 1));
-          entry.getValue().print();
-          System.out.println("");
-        }
-      });
+        row += String.format("x%d : %s\n", (entry.getKey() + 1), entry.getValue().getStringPrint());
+      }
+      System.out.print(row);
+      if (writeChoice == 1) {
+        fileWriter.writeFile(row);
+      }
     }
   }
 
@@ -123,33 +125,45 @@ public class Lineq {
     return getSolution(m);
   }
 
-  public void doCramer(Matrix m) {
+  public void doCramer(Matrix m, int writeChoice, FileTulis fileWriter) {
     Matrix matrixA = m.getMatrixAFromAugmented();
     Matrix matrixB = m.getMatrixBFromAugmented();
     double determinantA = matrixA.getDetWithCofactor();
 
+    String output = "";
     if (Math.abs(determinantA) < m.EPSILON_IMPRECISION) {
-      System.out.println("Determinan matriks 0 sehingga tidak dapat diperoleh solusinya lewat metode Cramer.");
+      output += ("Determinan matriks 0 sehingga tidak dapat diperoleh solusinya lewat metode Cramer.\n");
     } else if (!matrixA.isSquare()) {
-      System.out.println("Determinan matriks u/ metode cramer tidak terdefinisi karena bukan persegi.");
+      output += ("Determinan matriks u/ metode cramer tidak terdefinisi karena bukan persegi.\n");
     } else {
       for (int col = 0; col < matrixA.getColLength(); col++) {
         Matrix substitute = matrixA.substituteCramer(matrixB, col);
         double determinantX = substitute.getDetWithCofactor();
-        System.out.printf("X%d: %.2f\n", col, determinantX / determinantA);
+        output += String.format("x%d : %.2f\n", col, determinantX / determinantA);
       }
+    }
+    System.out.print(output);
+    if (writeChoice == 1) {
+      fileWriter.writeFile(output);
     }
   }
 
-  public void doInverse(Matrix m) {
+  public void doInverse(Matrix m, int writeChoice, FileTulis fileWriter) {
     Matrix inverse = m.getMatrixAFromAugmented().getInverse();
     Matrix matrixB = m.getMatrixBFromAugmented();
+    String output = "";
     if (inverse.getValidity()) {
       Matrix solution = inverse.multiplyMatrix(matrixB);
-      solution.displaySolution();
+      for (int baris = 0; baris < solution.getRowLength() ; baris++) {
+        output += String.format("x%d : %.2f\n", baris, solution.getMatrixElement(baris, 0));
+      }
     } else {
-      System.out
-          .println("Matrix tidak punya invers (singular) sehingga tidak bisa diperoleh solusinya lewat metode invers.");
+      output += ("Matrix tidak punya invers (singular) sehingga tidak bisa diperoleh solusinya lewat metode invers.\n");
+    }
+    System.out.print(output);
+    if (writeChoice == 1) {
+      fileWriter.writeFile(output);
     }
   }
+
 }
