@@ -39,10 +39,6 @@ public class ExpressionList {
                     // System.out.println("");
                     if (variables.get(i).addExpression(variables.get(j))) {
                         variables.remove(j);
-                        if (Math.abs(variables.get(i).getNumber()) < EPSILON_IMPRECISION) {
-                            variables.remove(i);
-                            break;
-                        }
                         j -= 1;
                     }
                 }
@@ -56,18 +52,24 @@ public class ExpressionList {
     }
 
     public String getStringPrint() {
+        boolean printedBefore = false;
         boolean isFirst = true;
         String row = "";
         for (Expression e : this.variables) {
             if (!isFirst) {
                 if (Math.abs(e.getNumber()) > EPSILON_IMPRECISION) {
-                    row += " + ";
+                    if (printedBefore) row += " + ";
                 } else {
                     continue;
                 }
             }
             isFirst = false;
+            if (Math.abs(e.getNumber()) < EPSILON_IMPRECISION && this.variables.size() > 1) {
+                printedBefore = false;
+                continue;
+            }
             row += e.getDisplayExpression();
+            printedBefore = true;
         }
         return row;
     }
