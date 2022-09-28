@@ -95,14 +95,14 @@ public class Lineq {
     return varName;
   }
 
-  public void Gauss(Matrix m, int writeChoice, FileTulis fileWriter) {
+  public HashMap<Integer, ExpressionList> Gauss(Matrix m, int writeChoice, FileTulis fileWriter) {
     m.toREF();
-    substituteAndDisplaySolution(m, true, writeChoice, fileWriter);
+    return substituteAndDisplaySolution(m, true, writeChoice, fileWriter);
   }
 
-  public void GaussJordan(Matrix m, int writeChoice, FileTulis fileWriter) {
+  public HashMap<Integer, ExpressionList> GaussJordan(Matrix m, int writeChoice, FileTulis fileWriter) {
     m.toRREF();
-    substituteAndDisplaySolution(m, true, writeChoice, fileWriter);
+    return substituteAndDisplaySolution(m, true, writeChoice, fileWriter);
   }
 
   public void doCramer(Matrix m) {

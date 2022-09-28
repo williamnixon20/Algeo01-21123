@@ -1,36 +1,28 @@
 package point;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Points {
   private double[][] points;
   private int rowEff = 0;
   private int colEff = 2;
-
-  private double[] samples;
-
   private boolean isValid;
-  private String type;
   private Scanner scanner;
+  private ArrayList<Double> samples;
 
-  public Points(int row, String type, boolean isValid, Scanner scanner) {
+  public Points(int row, boolean isValid, Scanner scanner) {
     this.rowEff = row;
-    this.type = type;
     this.isValid = isValid;
     this.points = new double[row][2];
     this.scanner = scanner;
   }
 
   public void readPoints() {
-    System.out.println("Masukkan titik:");
+    System.out.println("Terimakasih! Silahkan masukan " + this.rowEff + " pasang poin.");
     for (int i = 0; i < this.rowEff; i++) {
-      for (int j = 0; j < this.colEff; j++) {
-        this.points[i][j] = scanner.nextDouble();
-      }
-    }
-    if (this.type == "REG") {
-      System.out.print("Masukkan jumlah sampel: ");
-      this.readSamples(scanner.nextInt());
+      this.points[i][0] = this.scanner.nextFloat();
+      this.points[i][1] = this.scanner.nextFloat();
     }
   }
 
@@ -50,6 +42,14 @@ public class Points {
     this.isValid = isValid;
   }
 
+  public void setSamples(ArrayList<Double> samples) {
+    this.samples = samples;
+  }
+
+  public double[] getPoint(int row) {
+    return this.points[row];
+  }
+
   /**
    * Untuk keperluan testing
    * 
@@ -60,23 +60,9 @@ public class Points {
       for (int i = 0; i < this.rowEff; i++) {
         System.out.printf("(%.2f,%.2f)\n", this.points[i][0], this.points[i][1]);
       }
-      if (this.type == "REG") {
-        for (int i = 0; i < this.samples.length; i++) {
-          System.out.printf("%.2f ", this.samples[i]);
-        }
+      for (int i = 0; i < this.samples.size(); i++) {
+        System.out.printf("%.2f ", this.samples.get(i));
       }
     }
   }
-
-  public void setSamples(int size) {
-    this.samples = new double[size];
-  }
-
-  public void readSamples(int size) {
-    this.setSamples(size);
-    for (int i = 0; i < size; i++) {
-      this.samples[i] = this.scanner.nextDouble();
-    }
-  }
-
 }
