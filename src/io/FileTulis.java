@@ -1,6 +1,7 @@
 package io;
-import java.io.FileWriter;   
-import java.io.IOException;  
+
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class FileTulis {
   private FileWriter fileWriter;
@@ -14,7 +15,7 @@ public class FileTulis {
     try {
       changeCWD(filename);
       this.fileWriter = new FileWriter(this.cwd);
-    } catch ( IOException e) {
+    } catch (IOException e) {
       System.out.println("An error occurred.");
     }
   }
@@ -22,14 +23,15 @@ public class FileTulis {
   public void writeFile(String string) {
     try {
       this.fileWriter.write(string + "\n");
-    } catch ( IOException e) {
+    } catch (IOException e) {
       System.out.println("An error occurred." + e);
     }
   }
+
   public void closeFile() {
     try {
       this.fileWriter.close();
-    }catch ( IOException e ) {
+    } catch (IOException e) {
       System.out.println("An error occurred." + e);
     }
   }

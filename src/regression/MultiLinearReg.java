@@ -1,9 +1,12 @@
 package regression;
 
 import java.util.Scanner;
+import java.util.HashMap;
 
 import io.FileTulis;
 import matrix.Matrix;
+import matrix.expression.ExpressionList;
+import lineq.Lineq;
 
 public class MultiLinearReg {
 
@@ -12,29 +15,34 @@ public class MultiLinearReg {
      */
     public void doMultiLinearReg(Matrix data, Scanner scanner, int writeChoice, FileTulis fileWriter) {
         Matrix NEE;
-        String result;
+        HashMap<Integer, ExpressionList> solution;
+        Lineq lineq = new Lineq();
         NEE = getNEE(data, scanner);
+        solution = lineq.GaussJordan(NEE);
 
-        NEE.toRREF();
+        String result;
 
         result = "f(x) = ";
-        for (int i = 0; i < NEE.getColLength() - 1; i++) {
+
+        for (int i = 0; i < solution.size(); i++) {
+            solution.get(i).simplify();
+            double coeff = solution.get(i).getVariable(0).getNumber();
             if (i == 0) {
-                result += String.format("%.4f", NEE.getMatrixElement(i, NEE.getColLastIdx()));
+                result += String.format("%.4f", coeff);
             } else {
-                result += String.format("(%.4f)x%d", NEE.getMatrixElement(i, NEE.getColLastIdx()), i);
+                result += String.format("(%.4f)x%d", coeff, i);
             }
-            if (i != NEE.getColLastIdx() - 1) {
+
+            if (i != solution.size() - 1) {
                 result += " + ";
             }
         }
+
         if (writeChoice == 1) {
             fileWriter.writeFile(result + "\n");
         } else {
-            System.out.println("\nHasil Regresi Linear Berganda: ");
+            System.out.println("\nHasil Regresi Linier:");
             System.out.print(result);
-
-            System.out.println();
         }
 
         String choice;
@@ -57,7 +65,7 @@ public class MultiLinearReg {
                     System.out.printf("Masukkan x%d: ", i + 1);
                     refData[i] = scanner.nextDouble();
                 }
-                double estimatedValue = getEstimatedValue(NEE, refData, scanner);
+                double estimatedValue = getEstimatedValue(solution, refData, scanner);
                 if (writeChoice == 1) {
                     String temp = "Estimasi nilai ";
                     for (int i = 0; i < refData.length; i++) {
@@ -153,14 +161,13 @@ public class MultiLinearReg {
      * @param scanner
      * @return Estimasi nilai dari refData
      */
-    private double getEstimatedValue(Matrix MultiLinearRegSolution, double[] refData, Scanner scanner) {
+    private double getEstimatedValue(HashMap<Integer, ExpressionList> solution, double[] refData, Scanner scanner) {
         // System.out.println("Normal Estimated Eq: \n");
         // MultiLinearRegSolution.writeMatrix();
 
-        double estimatedValue = MultiLinearRegSolution.getMatrixElement(0, MultiLinearRegSolution.getColLastIdx());
-        for (int idx = 1; idx < MultiLinearRegSolution.getRowLength(); idx++) {
-            estimatedValue += refData[idx - 1]
-                    * MultiLinearRegSolution.getMatrixElement(idx, MultiLinearRegSolution.getColLastIdx());
+        double estimatedValue = solution.get(0).getVariable(0).getNumber();
+        for (int idx = 1; idx < solution.size(); idx++) {
+            estimatedValue += refData[idx - 1] * solution.get(idx).getVariable(0).getNumber();
         }
 
         return estimatedValue;
