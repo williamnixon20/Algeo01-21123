@@ -61,6 +61,17 @@ public class Lineq {
         }
       }
     }
+      /**
+     * Last run, see if any variables are still null. if so, set as parametric
+     */
+    for (int kolom = 0; kolom <= rowLength; kolom++) {
+      if (columnToExpression.get(kolom) == null) {
+          ExpressionList newList = new ExpressionList();
+          newList.addExpression(false, 1, generateParametricVariable(cntParam));
+          cntParam++;
+          columnToExpression.put(kolom, newList);
+      }
+    }
 
     return columnToExpression;
   }
