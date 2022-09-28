@@ -68,7 +68,7 @@ public class Interface {
         return result;
     }
 
-    private int mlrMenu() {
+    private int inputChoiceMenu() {
         int result = 0;
 
         System.out.println("\nSilahkan pilih metode input data:");
@@ -149,8 +149,10 @@ public class Interface {
                     break;
                 case 3:
                     if (fileReader.setFileName(scanner)) {
-                        Points p = fileReader.readPoints("ITPS");
+                        Points p = fileReader.readPointsFromFile();
                         p.writePoints();
+                        // PolinomInterpolation inter = new PolinomInterpolation(p, scanner);
+                        // inter.setMatrix();
                     } else {
                         System.out.println("File tidak ditemukan.");
                     }
@@ -187,9 +189,9 @@ public class Interface {
                     Matrix data;
                     MultiLinearReg mlr = new MultiLinearReg();
 
-                    int mlrChoice = mlrMenu();
+                    int inputChoice = inputChoiceMenu();
 
-                    switch (mlrChoice) {
+                    switch (inputChoice) {
                         case 1:
                             int varCount, sampleCount;
 
@@ -221,8 +223,25 @@ public class Interface {
 
                     break;
                 case 6:
-                    PolinomInterpolation Interpol = new PolinomInterpolation(this.scanner);
-                    Interpol.readPointsKeyboard();
+                    inputChoice = inputChoiceMenu();
+                    Points p = new Points(1, false, scanner);
+                    PolinomInterpolation polinom = new PolinomInterpolation(scanner);
+                    switch(inputChoice) {
+                        case 1:
+                            p = polinom.readPointsKeyboard();
+                            break;
+                        case 2:
+                            if (fileReader.setFileName(scanner)) {
+                                p = fileReader.readPointsFromFile();
+                            } else {
+                                System.out.println("File tidak ditemukan.");
+                            }
+                            break;
+                    }
+                    polinom.setPoints(p);
+                    polinom.setAugmented();
+                    polinom.solve();
+                    break;
                 case 7:
                     active = false;
                     break;

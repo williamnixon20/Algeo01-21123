@@ -65,4 +65,8 @@ public class ExpressionList {
             e.displayExpression();
         }      
     }
+
+    public double getFirstDouble() {
+        return this.variables.get(0).getNumber();
+    }
 }
