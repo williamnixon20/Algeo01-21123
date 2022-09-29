@@ -1,8 +1,8 @@
 package point;
 
 public class Point {
-  private float x;
-  private float y;
+  private double x;
+  private double y;
 
   /**
    * Constructor
@@ -10,7 +10,7 @@ public class Point {
    * @param x
    * @param y
    */
-  public Point(float x, float y) {
+  public Point(double x, double y) {
     this.x = x;
     this.y = y;
   }
@@ -21,7 +21,7 @@ public class Point {
    * @param x
    * @param y
    */
-  public void changePoint(float x, float y) {
+  public void changePoint(double x, double y) {
     this.x = x;
     this.y = y;
   }
@@ -31,7 +31,7 @@ public class Point {
    * 
    * @return
    */
-  public float getAbsis() {
+  public double getAbsis() {
     return this.x;
   }
 
@@ -40,7 +40,7 @@ public class Point {
    * 
    * @return
    */
-  public float getOrdinat() {
+  public double getOrdinat() {
     return this.y;
   }
 }
