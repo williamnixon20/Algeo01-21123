@@ -1,158 +1,169 @@
 package lineq;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.lang.Math;
+import java.nio.file.attribute.FileOwnerAttributeView;
 
 import io.FileTulis;
 import matrix.Matrix;
-import matrix.expression.Expression;
+import matrix.expression.ExpressionList;
 
 public class Lineq {
+  private static final double EPSILON_IMPRECISION = 0.00001;
 
-  public void substituteAndDisplaySolution(Matrix m, int writeChoice, FileTulis fileWriter) {
-    HashMap<Integer, ArrayList<Expression>> temp = new HashMap<Integer, ArrayList<Expression>>();
-    boolean isNoSol = false;
+  private HashMap<Integer, ExpressionList> getSolution(Matrix m) {
+    HashMap<Integer, ExpressionList> columnToExpression = new HashMap<Integer, ExpressionList>();
 
-    int rowLength = m.getRowLastIdx(), colLength = m.getColLastIdx(), cntParam = 97;
-    for (int i = rowLength; i >= 0; i--) {
+    int rowLength = m.getRowLastIdx(), colLength = m.getColLastIdx(), cntParam = (int) 'a';
+    for (int baris = rowLength; baris >= 0; baris--) {
+      /** isFound = telah leading 1 di baris */
       boolean isFound = false;
-      int target = i;
-      for (int j = 0; j < colLength; j++) {
-        if (!isFound && Double.compare(m.getMatrixElement(i, j), 1) == 0) {
+      int target = baris;
+      for (int kolom = 0; kolom < colLength; kolom++) {
+        /** Menemukan leading 1 di baris ini, buat List baru untuk kolom ini */
+        if (!isFound && Math.abs(m.getMatrixElement(baris, kolom) - 1) < EPSILON_IMPRECISION) {
           isFound = true;
-          target = j;
-          ArrayList<Expression> tempArrOfExp = new ArrayList<Expression>();
-          Expression tempExp = new Expression(true, m.getMatrixElement(i, colLength), null);
-          tempArrOfExp.add(tempExp);
-          temp.put(j, tempArrOfExp);
-        } else if (m.getMatrixElement(i, j) != 0.000000 && isFound) {
-          if (temp.get(j) == null) {
-            ArrayList<Expression> tempArrOfExp = new ArrayList<Expression>();
-            Expression parametrik = new Expression(false, 1, String.valueOf((char) cntParam));
-            Expression parametrikTarget = new Expression(false, (-1) * m.getMatrixElement(i, j),
-                String.valueOf((char) cntParam));
-            tempArrOfExp.add(parametrik);
+          target = kolom;
+          ExpressionList newList = new ExpressionList();
+          newList.addExpression(true, m.getMatrixElement(baris, colLength), null);
+          columnToExpression.put(kolom, newList);
+        }
+        /** Menemukan nilai bukan leading 1 di baris ini */
+        else if (isFound && Double.compare(m.getMatrixElement(baris, kolom), 1) != 0) {
+          /**
+           * Nilai tak 0 belum memiliki nilai di hashmap, buat agar menjadi parametrik.
+           * masukan -1*m[i][j] ke expression leading 1 (target)
+           */
+          if (columnToExpression.get(kolom) == null) {
+            ExpressionList newList = new ExpressionList();
+            newList.addExpression(false, 1, generateParametricVariable(cntParam));
+            double multiplier = -1 * m.getMatrixElement(baris, kolom);
+            columnToExpression.get(target).addExpression(false, multiplier, generateParametricVariable(cntParam));
             cntParam++;
-            temp.get(target).add(parametrikTarget);
-            temp.put(j, tempArrOfExp);
+            columnToExpression.put(kolom, newList);
           } else {
-            for (int k = 0; k < temp.get(j).size(); k++) {
-              Expression newExp = new Expression(temp.get(j).get(k).getIsNumber(), temp.get(j).get(k).getNumber(),
-                  temp.get(j).get(k).getVar());
-              // Expression tempExp = temp.get(j).get(k);
-              newExp.multiplyExpression((-1) * m.getMatrixElement(i, j));
-              temp.get(target).add(newExp);
-            }
+            /**
+             * Nilai tak 0 sudah ada di hashmap, kita substitusi.
+             */
+            ExpressionList ekspresiVariabelLeading1 = columnToExpression.get(target);
+            ExpressionList ekspresiVariabelSubstitusi = columnToExpression.get(kolom);
+            double multiplier = (-1) * m.getMatrixElement(baris, kolom);
+            ekspresiVariabelLeading1.addAndSubstitute(multiplier, ekspresiVariabelSubstitusi);
           }
-        } else if (m.getMatrixElement(i, j) == 0 && j == colLength - 1 && m.getMatrixElement(i, colLength) != 0
-            && !isFound) {
-          isNoSol = true;
+        } else if (Math.abs(m.getMatrixElement(baris, kolom)) < EPSILON_IMPRECISION && kolom == colLength - 1
+            && Double.compare(m.getMatrixElement(baris, colLength), 0) != 0 && !isFound) {
+          return columnToExpression;
+        } else if (!isFound && kolom == colLength - 1) {
+          /** Baris 0 semua, jadikan parametrik */
+          ExpressionList newList = new ExpressionList();
+          newList.addExpression(false, 1, generateParametricVariable(cntParam));
+          cntParam++;
+          columnToExpression.put(kolom, newList);
         }
       }
     }
+      /**
+     * Last run, see if any variables are still null. if so, set as parametric
+     */
+    for (int kolom = 0; kolom <= rowLength; kolom++) {
+      if (columnToExpression.get(kolom) == null) {
+          ExpressionList newList = new ExpressionList();
+          newList.addExpression(false, 1, generateParametricVariable(cntParam));
+          cntParam++;
+          columnToExpression.put(kolom, newList);
+      }
+    }
 
-    if (isNoSol){
+    return columnToExpression;
+  }
+
+  public void displaySolution(
+      HashMap<Integer, ExpressionList> expression,
+      int writeChoice,
+      FileTulis fileWriter) {
+
+    if (expression.size() == 0) {
       System.out.println("SPL tidak memiliki solusi.");
       if (writeChoice == 1) {
         fileWriter.writeFile("SPL tidak memiliki solusi.");
       }
-    }
-    else {
+    } else {
       String row = "";
-      for (int i = 0; i < temp.size(); i++) {
-        if (temp.get(i) == null) {
-          ArrayList<Expression> newTemp = new ArrayList<Expression>();
-          Expression newExp = new Expression(false, 1, String.valueOf((char) cntParam));
-          cntParam++;
-          newTemp.add(newExp);
-          temp.put(i, newTemp);
-        }
-        for (int j = 0; j < temp.get(i).size(); j++) {
-          for (int k = j + 1; k < temp.get(i).size(); k++) {
-            if (temp.get(i).get(j).getIsNumber()
-                && temp.get(i).get(j).getIsNumber() == temp.get(i).get(k).getIsNumber()) {
-              temp.get(i).get(j).setNumber(temp.get(i).get(j).getNumber() + temp.get(i).get(k).getNumber());
-              temp.get(i).remove(k);
-              k--;
-            } else if (!temp.get(i).get(j).getIsNumber()
-                && (temp.get(i).get(j).getVar().equals(temp.get(i).get(k).getVar()))) {
-              temp.get(i).get(j).setNumber(temp.get(i).get(j).getNumber() + temp.get(i).get(k).getNumber());
-              if (Double.compare(temp.get(i).get(j).getNumber(), 0) == 0) {
-                temp.get(i).remove(j);
-                j--;
-                k--;
-              }
-              temp.get(i).remove(k);
-              k--;
-            }
-          }
-        }
+      for (HashMap.Entry<Integer, ExpressionList> entry : expression.entrySet()) {
+        entry.getValue().simplify();
+        row += String.format("x%d : %s\n", (entry.getKey() + 1), entry.getValue().getStringPrint());
       }
-      for (int i = 0; i < temp.size(); i++) {
-        row += String.format("x%d: ", i + 1);
-        for (int j = 0; j < temp.get(i).size(); j++) {
-          if (temp.get(i).get(j).getNumber() < 0) {
-            row += String.format("- ");
-            temp.get(i).get(j).setNumber((-1) * temp.get(i).get(j).getNumber());
-          } else if (j > 0 && !(Double.compare(temp.get(i).get(j - 1).getNumber(), 0) == 0 && j == 1)) {
-            row += String.format("+ ");
-          }
-          if ((temp.get(i).get(j).getIsNumber()
-              && ((Double.compare(temp.get(i).get(j).getNumber(), 0) == 0 && temp.get(i).size() == 1)
-                  || temp.get(i).get(j).getNumber() != 0))
-              || (!temp.get(i).get(j).getIsNumber() && !(Double.compare(temp.get(i).get(j).getNumber(), 1) == 0))) {
-                row += String.format("%.2f", temp.get(i).get(j).getNumber());
-            if (temp.get(i).get(j).getIsNumber())
-              row += String.format(" ");
-          }
-          if (!temp.get(i).get(j).getIsNumber()) {
-            row += String.format(temp.get(i).get(j).getVar() + " ");
-          }
-        }
-        row += "\n";
-      }
+      System.out.print(row);
       if (writeChoice == 1) {
         fileWriter.writeFile(row);
       }
-      System.out.println(row);
     }
   }
-  public void Gauss(Matrix m, int writeChoice, FileTulis fileWriter) {
+
+  public String generateParametricVariable(int charCount) {
+    int upperBound = (int) 'z';
+    int lowerBound = (int) 'a';
+    int range = upperBound - lowerBound;
+    int decimalValue = charCount;
+    String varName = "";
+    do {
+      int decimal = (decimalValue - lowerBound) % range;
+      varName += Character.toString((char) (lowerBound += decimal));
+      decimalValue -= decimalValue - lowerBound;
+    } while (decimalValue > upperBound);
+
+    return varName;
+  }
+
+  public HashMap<Integer, ExpressionList> Gauss(Matrix m) {
     m.toREF();
-    substituteAndDisplaySolution(m, writeChoice, fileWriter);
+    return getSolution(m);
   }
 
-  public void GaussJordan(Matrix m, int writeChoice, FileTulis fileWriter) {
+  public HashMap<Integer, ExpressionList> GaussJordan(Matrix m) {
     m.toRREF();
-    substituteAndDisplaySolution(m, writeChoice, fileWriter);
+    return getSolution(m);
   }
 
-  public void doCramer(Matrix m) {
+  public void doCramer(Matrix m, int writeChoice, FileTulis fileWriter) {
     Matrix matrixA = m.getMatrixAFromAugmented();
     Matrix matrixB = m.getMatrixBFromAugmented();
     double determinantA = matrixA.getDetWithCofactor();
 
+    String output = "";
     if (Math.abs(determinantA) < m.EPSILON_IMPRECISION) {
-      System.out.println("Determinan matriks 0 sehingga tidak dapat diperoleh solusinya lewat metode Cramer.");
+      output += ("Determinan matriks 0 sehingga tidak dapat diperoleh solusinya lewat metode Cramer.\n");
     } else if (!matrixA.isSquare()) {
-      System.out.println("Determinan matriks u/ metode cramer tidak terdefinisi karena bukan persegi.");
+      output += ("Determinan matriks u/ metode cramer tidak terdefinisi karena bukan persegi.\n");
     } else {
       for (int col = 0; col < matrixA.getColLength(); col++) {
         Matrix substitute = matrixA.substituteCramer(matrixB, col);
         double determinantX = substitute.getDetWithCofactor();
-        System.out.printf("X%d: %.2f\n", col, determinantX/determinantA);
+        output += String.format("x%d : %.2f\n", col, determinantX / determinantA);
       }
+    }
+    System.out.print(output);
+    if (writeChoice == 1) {
+      fileWriter.writeFile(output);
     }
   }
 
-  public void doInverse(Matrix m) {
+  public void doInverse(Matrix m, int writeChoice, FileTulis fileWriter) {
     Matrix inverse = m.getMatrixAFromAugmented().getInverse();
     Matrix matrixB = m.getMatrixBFromAugmented();
+    String output = "";
     if (inverse.getValidity()) {
       Matrix solution = inverse.multiplyMatrix(matrixB);
-      solution.displaySolution();      
+      for (int baris = 0; baris < solution.getRowLength() ; baris++) {
+        output += String.format("x%d : %.2f\n", baris, solution.getMatrixElement(baris, 0));
+      }
     } else {
-      System.out.println("Matrix tidak punya invers (singular) sehingga tidak bisa diperoleh solusinya lewat metode invers.");
+      output += ("Matrix tidak punya invers (singular) sehingga tidak bisa diperoleh solusinya lewat metode invers.\n");
+    }
+    System.out.print(output);
+    if (writeChoice == 1) {
+      fileWriter.writeFile(output);
     }
   }
+
 }

@@ -5,8 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
-import bonus.ScaleImage;
-import interpolation.Bicubic;
+import interpolation.PolinomInterpolation;
 import io.FileReader;
 import io.FileTulis;
 import lineq.Lineq;
@@ -28,7 +27,8 @@ public class Interface {
         System.out.println("3. Input points dari file");
         System.out.println("4. SPL");
         System.out.println("5. Regresi Linier Berganda");
-        System.out.println("6. Keluar\n==============");
+        System.out.println("6. Interpolasi Polinom");
+        System.out.println("7. Keluar\n==============");
 
         System.out.print("Masukan: ");
 
@@ -68,7 +68,7 @@ public class Interface {
         return result;
     }
 
-    private int mlrMenu() {
+    private int inputChoiceMenu() {
         int result = 0;
 
         System.out.println("\nSilahkan pilih metode input data:");
@@ -104,12 +104,16 @@ public class Interface {
             FileReader fileReader = new FileReader();
             int menuChoice = this.mainMenu();
             int writeChoice = 2;
-            if (menuChoice != 5) {
+            if (menuChoice != 7) {
                 writeChoice = this.writeMenu();
             }
-            if (writeChoice == 1 && menuChoice != 5) {
-                String fileName = this.writeNameMenu();
-                this.fileWriter = new FileTulis(fileName);
+            if (writeChoice == 1) {
+                try {
+                    String fileName = this.writeNameMenu();
+                    this.fileWriter = new FileTulis(fileName);
+                } catch (Exception e) {
+                    writeChoice = 1;
+                }
             }
             switch (menuChoice) {
                 case 1:
@@ -122,12 +126,13 @@ public class Interface {
                     Matrix baru = new Matrix(row, col, true, scanner);
                     baru.readMatrix();
                     baru.writeMatrix();
-                    System.out.printf("Determinan matriks: %.2f dan lewat metode segitiga %.2f %.2f\n",
-                            baru.getDetWithCofactor(), baru.getDeterminantWithTriangle(true),
-                            baru.getDeterminantWithTriangle(false));
+                    // System.out.printf("Determinan matriks: %.2f dan lewat metode segitiga %.2f
+                    // %.2f\n",
+                    // baru.getDetWithCofactor(), baru.getDeterminantWithTriangle(true),
+                    // baru.getDeterminantWithTriangle(false));
                     System.out.println("Matriks inversnya");
                     baru.getInverse().writeMatrix();
-                    baru.getInverseWithAdjoin().writeMatrix();
+                    // baru.getInverseWithAdjoin().writeMatrix();
                     System.out.print("Masukkan panjang baris: ");
                     row = this.scanner.nextInt();
                     System.out.print("Masukkan panjang kolom: ");
@@ -148,8 +153,10 @@ public class Interface {
                     break;
                 case 3:
                     if (fileReader.setFileName(scanner)) {
-                        Points p = fileReader.readPoints("ITPS");
+                        Points p = fileReader.readPointsFromFile();
                         p.writePoints();
+                        // PolinomInterpolation inter = new PolinomInterpolation(p, scanner);
+                        // inter.setMatrix();
                     } else {
                         System.out.println("File tidak ditemukan.");
                     }
@@ -168,24 +175,25 @@ public class Interface {
                     Lineq leq = new Lineq();
                     switch (splChoice) {
                         case 1:
-                            leq.Gauss(m, writeChoice, this.fileWriter);
+                            leq.displaySolution(leq.Gauss(m), writeChoice, fileWriter);
                             break;
                         case 2:
-                            leq.GaussJordan(m, writeChoice, this.fileWriter);
+                            leq.displaySolution(leq.GaussJordan(m), writeChoice, fileWriter);
                             break;
                         case 3:
-                            leq.doCramer(m);
+                            leq.doCramer(m, writeChoice, fileWriter);
                             break;
                         case 4:
-                            leq.doInverse(m);
+                            leq.doInverse(m, writeChoice, fileWriter);
                             break;
                     }
                     break;
                 case 5:
                     Matrix data;
                     MultiLinearReg mlr = new MultiLinearReg();
-                    int mlrChoice = mlrMenu();
-                    switch (mlrChoice) {
+
+                    int inputChoice = inputChoiceMenu();
+                    switch (inputChoice) {
                         case 1:
                             int varCount, sampleCount;
                             System.out.print("Masukkan banyak variabel: "); // variabel x
@@ -194,22 +202,47 @@ public class Interface {
                             sampleCount = scanner.nextInt();
                             data = new Matrix(sampleCount, varCount + 1, true, scanner);
                             data.readMatrix();
-                            mlr.doMultiLinearReg(data, scanner);
+                            mlr.doMultiLinearReg(data, scanner, writeChoice, this.fileWriter);
                             break;
                         case 2:
                             if (fileReader.setFileName(scanner)) {
                                 data = fileReader.readMatrix();
+                                mlr.doMultiLinearReg(data, scanner, writeChoice, this.fileWriter);
                             } else {
                                 System.out.println("File tidak ditemukan.");
                                 break;
                             }
-                            mlr.doMultiLinearReg(data, scanner);
                             break;
-                        case 3:
+                        default:
                             break;
                     }
                     break;
                 case 6:
+                    inputChoice = inputChoiceMenu();
+                    Points p = new Points(1, false, scanner);
+                    PolinomInterpolation polinom = new PolinomInterpolation(scanner);
+                    Boolean keluar = false;
+                    switch (inputChoice) {
+                        case 1:
+                            p = polinom.readPointsKeyboard();
+                            break;
+                        case 2:
+                            if (fileReader.setFileName(scanner)) {
+                                p = fileReader.readPointsFromFile();
+                            } else {
+                                System.out.println("File tidak ditemukan.");
+                            }
+                            break;
+                        default:
+                            keluar = true;
+                    }
+                    if (keluar)
+                        break;
+                    polinom.setPoints(p);
+                    polinom.setAugmented();
+                    polinom.solve(inputChoice, writeChoice, fileWriter);
+                    break;
+                case 7:
                     active = false;
                     break;
                 default:
@@ -217,7 +250,7 @@ public class Interface {
                     break;
             }
             if (writeChoice == 1) {
-                System.out.println("Output telah tertulis di file.");
+                System.out.println("\nOutput telah tertulis di file.");
                 this.fileWriter.closeFile();
             }
         }

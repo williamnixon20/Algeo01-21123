@@ -98,8 +98,9 @@ public class FileReader {
     return m;
   }
 
-  public Points readPoints(String type) throws FileNotFoundException {
+  public Points readPointsFromFile() throws FileNotFoundException {
     ArrayList<ArrayList<Double>> arrOfPoints = new ArrayList<ArrayList<Double>>();
+    ArrayList<Double> samples = new ArrayList<Double>();
     boolean isDataValid = true;
     File file = new File(this.cwd);
     Scanner scanner = new Scanner(file);
@@ -110,8 +111,16 @@ public class FileReader {
       String[] arrOfInput = input.split(" ", -2);
 
       if (arrOfInput.length != 2) {
-        System.out.println("Harap masukkan data yang valid.");
-        isDataValid = false;
+        while (arrOfInput.length == 1) {
+          try {
+            double estimate = Double.parseDouble(arrOfInput[0]);
+            samples.add(estimate);
+            input = scanner.nextLine();
+            arrOfInput = input.split(" ", -2);
+          } catch (Exception e) {
+            break;
+          }
+        }
         break;
       }
 
@@ -128,7 +137,7 @@ public class FileReader {
     }
 
     int rowSize = arrOfPoints.size();
-    Points p = new Points(rowSize, type, false, scanner);
+    Points p = new Points(rowSize, false, scanner);
 
     if (isDataValid) {
       p.changePointsValidty(true);
@@ -138,6 +147,7 @@ public class FileReader {
       }
     }
 
+    p.setSamples(samples);
     return p;
   }
 }

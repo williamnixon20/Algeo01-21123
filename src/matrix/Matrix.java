@@ -6,7 +6,7 @@ import matrix.coordinate.*;
 public class Matrix {
   public int MAX_DIMENSION = 1000;
   public int VAL_UNDEF = 99999999;
-  public double EPSILON_IMPRECISION = 0.0000001;
+  public double EPSILON_IMPRECISION = 0.00001;
   /**
    * private artinya tidak bisa diakses dari luar
    * segala interaksi dengan field harus dilakukan dengan fungsi di kelas matriks
@@ -92,6 +92,12 @@ public class Matrix {
     this.isValid = isValid;
   }
 
+  public void setRow(int row, ArrayList<Double> values) {
+    for (int kolom = 0; kolom < getColLength(); kolom++) {
+      this.setMatrixElement(row, kolom, values.get(kolom));
+    }
+  }
+
   public boolean isSquare() {
     return getColLength() == getRowLength();
   }
@@ -124,12 +130,6 @@ public class Matrix {
         }
         System.out.print("\n");
       }
-    }
-  }
-
-  public void displaySolution() {
-    for (int i = 0; i < this.rowEff; i++) {
-      System.out.printf("X%d %.2f\n", i, getMatrixElement(i, 0));
     }
   }
 
@@ -485,9 +485,9 @@ public class Matrix {
     }
 
     if ((refRow + refCol) % 2 == 0) {
-      return m.getDetWithCofactor();
+      return m.getDeterminantWithTriangle(true);
     } else {
-      return (-1) * m.getDetWithCofactor();
+      return (-1) * m.getDeterminantWithTriangle(true);
     }
   }
 
@@ -515,7 +515,7 @@ public class Matrix {
   }
 
   public Matrix getInverse() {
-    if (!isSquare()) {
+    if (!isSquare() || Math.abs(getDeterminantWithTriangle(true)) < EPSILON_IMPRECISION) {
       System.out.println("Matriks tidak mempunyai invers!");
       return new Matrix(0, 0, false, this.scanner);
     }
@@ -555,11 +555,11 @@ public class Matrix {
   }
 
   public Matrix getInverseWithAdjoin() {
-    if (!isSquare() || Math.abs(getDetWithCofactor()) < EPSILON_IMPRECISION || getDetWithCofactor() == VAL_UNDEF) {
+    if (!isSquare() || Math.abs(getDeterminantWithTriangle(true)) < EPSILON_IMPRECISION) {
       System.out.println("Matriks tidak mempunyai invers!");
       return new Matrix(0, 0, false, this.scanner);
     }
-    double determinant = this.getDetWithCofactor();
+    double determinant = this.getDeterminantWithTriangle(true);
     Matrix adjoin = this.getAdjoin();
     for (int i = 0; i < adjoin.getRowLength(); i++) {
       adjoin.multiplyRow(i, 1 / determinant);
