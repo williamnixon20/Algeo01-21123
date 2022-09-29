@@ -137,7 +137,6 @@ public class Interface {
                     row = this.scanner.nextInt();
                     System.out.print("Masukkan panjang kolom: ");
                     col = this.scanner.nextShort();
-
                     Matrix baru2 = new Matrix(row, col, true, scanner);
                     baru2.readMatrix();
                     baru.multiplyMatrix(baru2).writeMatrix();
@@ -166,7 +165,6 @@ public class Interface {
                     int splChoice = this.splMenu();
                     if (splChoice == 5)
                         break;
-
                     Matrix m;
                     if (fileReader.setFileName(scanner)) {
                         m = fileReader.readMatrix();
@@ -195,22 +193,16 @@ public class Interface {
                     MultiLinearReg mlr = new MultiLinearReg();
 
                     int inputChoice = inputChoiceMenu();
-
                     switch (inputChoice) {
                         case 1:
                             int varCount, sampleCount;
-
                             System.out.print("Masukkan banyak variabel: "); // variabel x
                             varCount = scanner.nextInt();
                             System.out.print("Masukkan banyak sample: ");
                             sampleCount = scanner.nextInt();
-
                             data = new Matrix(sampleCount, varCount + 1, true, scanner);
-
                             data.readMatrix();
-
                             mlr.doMultiLinearReg(data, scanner, writeChoice, this.fileWriter);
-
                             break;
                         case 2:
                             if (fileReader.setFileName(scanner)) {
@@ -220,19 +212,17 @@ public class Interface {
                                 System.out.println("File tidak ditemukan.");
                                 break;
                             }
-
                             break;
                         default:
                             break;
                     }
-
                     break;
                 case 6:
                     inputChoice = inputChoiceMenu();
                     Points p = new Points(1, false, scanner);
                     PolinomInterpolation polinom = new PolinomInterpolation(scanner);
                     Boolean keluar = false;
-                    switch(inputChoice) {
+                    switch (inputChoice) {
                         case 1:
                             p = polinom.readPointsKeyboard();
                             break;
@@ -246,7 +236,8 @@ public class Interface {
                         default:
                             keluar = true;
                     }
-                    if (keluar) break;
+                    if (keluar)
+                        break;
                     polinom.setPoints(p);
                     polinom.setAugmented();
                     polinom.solve(inputChoice, writeChoice, fileWriter);
