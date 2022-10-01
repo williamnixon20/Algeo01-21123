@@ -19,6 +19,12 @@ public class ExpressionList {
         this.variables.add(variable);
     }
 
+    /**
+     * Mengalikan semua variabel dalam list substituent dan memasukkanya ke ekspresi ini
+     * Mirip operasi OBE, tapi untuk parametrik dan substitusi balik gauss/gaussjordan
+     * @param multiplier
+     * @param substituent
+     */
     public void addAndSubstitute(double multiplier, ExpressionList substituent) {
         for (Expression e : substituent.variables) {
             Expression multiplied = new Expression(e.getIsNumber(), e.getNumber() * multiplier, e.getVar());
@@ -28,6 +34,10 @@ public class ExpressionList {
         }
     }
 
+    /**
+     * Simplifikasi term yang ada di dalam expr list
+     * Misalnyaa a + a = 2a
+     */
     public void simplify() {
         for (int i = 0; i < variables.size(); i++) {
             System.out.println(this.getStringPrint());
@@ -49,6 +59,10 @@ public class ExpressionList {
         }
     }
 
+    /**
+     * Mendapatkan representasi string yang akan di print dari suatu expr list
+     * @return
+     */
     public String getStringPrint() {
         boolean printedBefore = false;
         boolean isFirst = true;
