@@ -6,7 +6,7 @@ import matrix.coordinate.*;
 public class Matrix {
   public int MAX_DIMENSION = 1000;
   public int VAL_UNDEF = 99999999;
-  public double EPSILON_IMPRECISION = 0.00001;
+  public double EPSILON_IMPRECISION = 0.0001;
   /**
    * private artinya tidak bisa diakses dari luar
    * segala interaksi dengan field harus dilakukan dengan fungsi di kelas matriks
@@ -515,7 +515,7 @@ public class Matrix {
   }
 
   public Matrix getInverse() {
-    if (!isSquare() || Math.abs(getDeterminantWithTriangle(true)) < EPSILON_IMPRECISION) {
+    if (!isSquare()) {
       System.out.println("Matriks tidak mempunyai invers!");
       return new Matrix(0, 0, false, this.scanner);
     }
@@ -555,7 +555,7 @@ public class Matrix {
   }
 
   public Matrix getInverseWithAdjoin() {
-    if (!isSquare() || Math.abs(getDeterminantWithTriangle(true)) < EPSILON_IMPRECISION) {
+    if (!isSquare()) {
       System.out.println("Matriks tidak mempunyai invers!");
       return new Matrix(0, 0, false, this.scanner);
     }
