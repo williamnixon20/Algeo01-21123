@@ -44,12 +44,14 @@ public class ScaleImage {
      */
     String cwd = System.getProperty("user.dir");
     try {
-      cwd += "/src/bonus/images-in/" + fileName;
+      cwd += "/test/bonus/images-in/" + fileName;
       f = new File(cwd);
       img = ImageIO.read(f);
     } catch (IOException e) {
       System.out.println("File tidak ditemukan.");
     }
+
+    System.out.println("Gambar sedang diproses! Mohon bersabar ya... Mungkin 1-2 menit jika gambar anda high quality atau besar dimensinya (gambar tidak harus grayscale)");
 
     BufferedImage padImg = new BufferedImage(img.getWidth() + 4, img.getHeight() + 4, BufferedImage.TYPE_INT_RGB);
     BufferedImage newImg = new BufferedImage(img.getWidth() * 2, img.getHeight() * 2, BufferedImage.TYPE_INT_RGB);
@@ -224,11 +226,11 @@ public class ScaleImage {
      */
     cwd = System.getProperty("user.dir");
     try {
-      cwd += "/src/bonus/images-out/" + fileName;
+      cwd += "/test/bonus/images-out/" + fileName;
       f = new File(cwd);
       ImageIO.write(newImg, "jpg", f);
       System.out.println(
-          "Gambar telah discale menjadi 2x semula. Dapat dilihat di folder /src/bonus/images-out dengan nama file "
+          "Gambar telah discale menjadi 2x semula. Dapat dilihat di folder /test/bonus/images-out dengan nama file "
               + fileName);
     } catch (IOException e) {
       System.out.println("Error internal.");

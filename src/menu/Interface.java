@@ -1,8 +1,7 @@
 package menu;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
+
 import java.util.Scanner;
 
 import bonus.ScaleImage;
@@ -14,7 +13,6 @@ import lineq.Lineq;
 import regression.MultiLinearReg;
 import point.*;
 import matrix.*;
-import matrix.expression.Expression;
 
 public class Interface {
     private Scanner scanner;
@@ -24,15 +22,12 @@ public class Interface {
         int result = 0;
 
         System.out.println("\nMenu");
-        System.out.println("1. Input dari keyboard & Display Matriks");
-        System.out.println("2. Input dari file & Display Matriks");
-        System.out.println("3. Input points dari file");
-        System.out.println("4. SPL");
-        System.out.println("5. Regresi Linier Berganda");
-        System.out.println("6. Interpolasi Polinom");
-        System.out.println("7. Interpolasi Bicubic");
-        System.out.println("8. Image Scalling");
-        System.out.println("9. Keluar\n==============");
+        System.out.println("1. SPL");
+        System.out.println("2. Regresi Linier Berganda");
+        System.out.println("3. Interpolasi Polinom");
+        System.out.println("4. Interpolasi Bicubic");
+        System.out.println("5. Image Scaling");
+        System.out.println("6. Keluar\n==============");
 
         System.out.print("Masukan: ");
 
@@ -91,7 +86,7 @@ public class Interface {
     private String writeNameMenu() {
         String result;
 
-        System.out.println("Nama filenya apa (xxxx.txt)? (akan ditulis di /test/output)");
+        System.out.println("Nama filenya apa (tuliskan juga .txt)? (akan ditulis di /test/output)");
         System.out.print("Masukan: ");
 
         result = this.scanner.next();
@@ -108,9 +103,11 @@ public class Interface {
             FileReader fileReader = new FileReader();
             int menuChoice = this.mainMenu();
             int writeChoice = 2;
-            if (menuChoice < 7) {
+
+            if (menuChoice < 6 & menuChoice != 5) {
                 writeChoice = this.writeMenu();
             }
+
             if (writeChoice == 1) {
                 try {
                     String fileName = this.writeNameMenu();
@@ -119,8 +116,10 @@ public class Interface {
                     writeChoice = 1;
                 }
             }
+
             switch (menuChoice) {
-                case 1:
+                /** case 0, for testing purposes only */
+                case 0:
                     int row, col;
                     System.out.print("Masukkan panjang baris: ");
                     row = this.scanner.nextInt();
@@ -147,25 +146,7 @@ public class Interface {
                     // baru.toRREF();
                     // baru.writeMatrix();
                     break;
-                case 2:
-                    if (fileReader.setFileName(scanner)) {
-                        Matrix m = fileReader.readMatrix();
-                        m.writeMatrix();
-                    } else {
-                        System.out.println("File tidak ditemukan.");
-                    }
-                    break;
-                case 3:
-                    if (fileReader.setFileName(scanner)) {
-                        Points p = fileReader.readPointsFromFile();
-                        p.writePoints();
-                        // PolinomInterpolation inter = new PolinomInterpolation(p, scanner);
-                        // inter.setMatrix();
-                    } else {
-                        System.out.println("File tidak ditemukan.");
-                    }
-                    break;
-                case 4:
+                case 1:
                     int splChoice = this.splMenu();
                     if (splChoice == 5)
                         break;
@@ -205,7 +186,7 @@ public class Interface {
                             break;
                     }
                     break;
-                case 5:
+                case 2:
                     Matrix data;
                     MultiLinearReg mlr = new MultiLinearReg();
 
@@ -234,7 +215,7 @@ public class Interface {
                             break;
                     }
                     break;
-                case 6:
+                case 3:
                     inputChoice = inputChoiceMenu();
                     Points p = new Points(1, false, scanner);
                     PolinomInterpolation polinom = new PolinomInterpolation(scanner);
@@ -259,13 +240,14 @@ public class Interface {
                     polinom.setAugmented();
                     polinom.solve(inputChoice, writeChoice, fileWriter);
                     break;
-                case 7:
+                case 4:
                     inputChoice = inputChoiceMenu();
                     keluar = false;
                     Matrix mBic;
                     Point pBic;
                     Bicubic intpBcb = new Bicubic();
                     double intpBcbRes, xBic, yBic;
+                    String output = "";
                     switch (inputChoice) {
                         case 1:
                             // Input matrix dari keyboard
@@ -284,7 +266,8 @@ public class Interface {
 
                             // Hitung interpolasi bicubic dan cetak ke layar
                             intpBcbRes = intpBcb.bicubic(mBic, pBic, scanner);
-                            System.out.printf("f(%.2f,%.2f) = %.2f\n", xBic, yBic, intpBcbRes);
+                            output += String.format("f(%.2f,%.2f) = %.2f\n", xBic, yBic, intpBcbRes);
+                            break;
                         case 2:
                             if (fileReader.setFileName(scanner)) {
                                 // Bangun matrix dari file
@@ -298,9 +281,9 @@ public class Interface {
 
                                 // Hitung interpolasi bicubic dan cetak ke layar
                                 intpBcbRes = intpBcb.bicubic(mBic, pBic, scanner);
-                                System.out.printf("f(%.2f,%.2f) = %.2f\n", xBic, yBic, intpBcbRes);
+                                output += String.format("f(%.2f,%.2f) = %.2f\n", xBic, yBic, intpBcbRes);
                             } else {
-                                System.out.println("File tidak ditemukan.");
+                                output += String.format("File tidak ditemukan.");
                             }
                             break;
                         default:
@@ -308,14 +291,20 @@ public class Interface {
                     }
                     if (keluar)
                         break;
+
+                    System.out.print(output);
+                    if (writeChoice == 1) {
+                        fileWriter.writeFile(output);
+                    }
+
                     break;
-                case 8:
-                    System.out.print("Masukkan nama file: ");
+                case 5:
+                    System.out.println("Rasakan sendiri dahsyatnya magnifikasi gambar dengan algoritma kami.\nSilakan masukkan nama file gambar di /test/bonus/images-in: ");
                     String fileName = scanner.next();
                     ScaleImage scaleImg = new ScaleImage();
                     scaleImg.scaleImage(fileName);
                     break;
-                case 9:
+                case 6:
                     active = false;
                     break;
                 default:
