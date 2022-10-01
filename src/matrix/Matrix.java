@@ -6,7 +6,7 @@ import matrix.coordinate.*;
 public class Matrix {
   public int MAX_DIMENSION = 1000;
   public int VAL_UNDEF = 99999999;
-  public double EPSILON_IMPRECISION = 0.0001;
+  public double EPSILON_IMPRECISION = 0.000000000000001;
   /**
    * private artinya tidak bisa diakses dari luar
    * segala interaksi dengan field harus dilakukan dengan fungsi di kelas matriks
@@ -299,7 +299,7 @@ public class Matrix {
     Coordinate pivot = getPivot(0);
     int curLead = pivot.getCol();
     for (int row = 0; row < getRowLength() - 1; row++) {
-      if (curLead < VAL_UNDEF) {
+      if (curLead < getColLastIdx()) {
         if (pivot.getRow() != row) {
           swapRow(pivot.getRow(), row);
         }
@@ -315,12 +315,13 @@ public class Matrix {
             doRowOperation(row, xrow, multiplier);
           }
         }
+      } else if (curLead == getColLastIdx()) {
+        break;
       }
       pivot = getPivot(row + 1);
       curLead = pivot.getCol();
     }
-
-    if (curLead < VAL_UNDEF && this.mat[getRowLastIdx()][curLead] != 1) {
+    if (curLead < getColLastIdx() && this.mat[getRowLastIdx()][curLead] != 1) {
       multiplyRow(getRowLastIdx(), 1 / this.mat[getRowLastIdx()][curLead]);
     }
   }
@@ -332,7 +333,7 @@ public class Matrix {
     toREF();
     for (int row = getRowLastIdx(); row > 0; row--) {
       int curLead = getLeadingCoeffIdx(row);
-      if (curLead < VAL_UNDEF) {
+      if (curLead < getColLastIdx()) {
         for (int xrow = row - 1; xrow >= 0; xrow--) {
           if (this.mat[xrow][curLead] != 0) {
             double multiplier = (-1) * this.mat[xrow][curLead] / this.mat[row][curLead];

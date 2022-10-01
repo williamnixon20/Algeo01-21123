@@ -171,6 +171,7 @@ public class Interface {
                         }
                     }
                     Lineq leq = new Lineq();
+                    System.out.println();
                     switch (splChoice) {
                         case 1:
                             leq.displaySolution(leq.Gauss(m), writeChoice, fileWriter);
@@ -299,7 +300,8 @@ public class Interface {
 
                     break;
                 case 5:
-                    System.out.println("Rasakan sendiri dahsyatnya magnifikasi gambar dengan algoritma kami.\nSilakan masukkan nama file gambar di /test/bonus/images-in: ");
+                    System.out.println(
+                            "Rasakan sendiri dahsyatnya magnifikasi gambar dengan algoritma kami.\nSilakan masukkan nama file gambar di /test/bonus/images-in: ");
                     String fileName = scanner.next();
                     ScaleImage scaleImg = new ScaleImage();
                     scaleImg.scaleImage(fileName);
