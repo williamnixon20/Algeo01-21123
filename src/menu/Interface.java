@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import bonus.ScaleImage;
+import interpolation.Bicubic;
 import interpolation.PolinomInterpolation;
 import io.FileReader;
 import io.FileTulis;
@@ -28,7 +30,9 @@ public class Interface {
         System.out.println("4. SPL");
         System.out.println("5. Regresi Linier Berganda");
         System.out.println("6. Interpolasi Polinom");
-        System.out.println("7. Keluar\n==============");
+        System.out.println("7. Interpolasi Bicubic");
+        System.out.println("8. Image Scalling");
+        System.out.println("9. Keluar\n==============");
 
         System.out.print("Masukan: ");
 
@@ -104,7 +108,7 @@ public class Interface {
             FileReader fileReader = new FileReader();
             int menuChoice = this.mainMenu();
             int writeChoice = 2;
-            if (menuChoice != 7) {
+            if (menuChoice < 7) {
                 writeChoice = this.writeMenu();
             }
             if (writeChoice == 1) {
@@ -243,6 +247,62 @@ public class Interface {
                     polinom.solve(inputChoice, writeChoice, fileWriter);
                     break;
                 case 7:
+                    inputChoice = inputChoiceMenu();
+                    keluar = false;
+                    Matrix mBic;
+                    Point pBic;
+                    Bicubic intpBcb = new Bicubic();
+                    double intpBcbRes, xBic, yBic;
+                    switch (inputChoice) {
+                        case 1:
+                            // Input matrix dari keyboard
+                            int rowBic = 4;
+                            int colBic = 4;
+                            mBic = new Matrix(rowBic, colBic, true, scanner);
+                            mBic.readMatrix();
+
+                            // Input point dari keyboard
+                            System.out.println("Rentang nilai x dan y adalah [0,1].");
+                            System.out.print("Masukkan nilai x: ");
+                            xBic = this.scanner.nextDouble();
+                            System.out.print("Masukkan nilai y: ");
+                            yBic = this.scanner.nextDouble();
+                            pBic = new Point(xBic, yBic);
+
+                            // Hitung interpolasi bicubic dan cetak ke layar
+                            intpBcbRes = intpBcb.bicubic(mBic, pBic, scanner);
+                            System.out.printf("f(%.2f,%.2f) = %.2f\n", xBic, yBic, intpBcbRes);
+                        case 2:
+                            if (fileReader.setFileName(scanner)) {
+                                // Bangun matrix dari file
+                                mBic = new Matrix(4, 4, true, scanner);
+                                mBic = fileReader.readBicubicFromFile().get(0);
+
+                                // Bangun point dari file
+                                xBic = fileReader.readBicubicFromFile().get(1).getMatrixElement(0, 0);
+                                yBic = fileReader.readBicubicFromFile().get(1).getMatrixElement(0, 1);
+                                pBic = new Point(xBic, yBic);
+
+                                // Hitung interpolasi bicubic dan cetak ke layar
+                                intpBcbRes = intpBcb.bicubic(mBic, pBic, scanner);
+                                System.out.printf("f(%.2f,%.2f) = %.2f\n", xBic, yBic, intpBcbRes);
+                            } else {
+                                System.out.println("File tidak ditemukan.");
+                            }
+                            break;
+                        default:
+                            keluar = true;
+                    }
+                    if (keluar)
+                        break;
+                    break;
+                case 8:
+                    System.out.print("Masukkan nama file: ");
+                    String fileName = scanner.next();
+                    ScaleImage scaleImg = new ScaleImage();
+                    scaleImg.scaleImage(fileName);
+                    break;
+                case 9:
                     active = false;
                     break;
                 default:

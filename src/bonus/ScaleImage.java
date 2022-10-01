@@ -11,15 +11,13 @@ import interpolation.Bicubic;
 import matrix.Matrix;
 import point.Point;
 
-import java.io.IOException;
-
 public class ScaleImage {
   public Color c(BufferedImage img, int x, int y) {
     Color c = new Color(img.getRGB(x, y));
     int c_r = (int) Math.round((c.getRed()));
     int c_g = (int) Math.round((c.getGreen()));
     int c_b = (int) Math.round((c.getBlue()));
-    int cSum = c_r + c_g + c_b;
+    // int cSum = c_r + c_g + c_b;
     Color cGray = new Color(c_r, c_g, c_b);
     // Color cGray = new Color(c.getRed(), c.getGreen(), c.getBlue());
     return cGray;
@@ -37,7 +35,7 @@ public class ScaleImage {
     }
   }
 
-  public void scaleImage() throws IOException {
+  public void scaleImage(String fileName) throws IOException {
     BufferedImage img = null;
     File f = null;
 
@@ -46,11 +44,11 @@ public class ScaleImage {
      */
     String cwd = System.getProperty("user.dir");
     try {
-      cwd += "/src/bonus/mawar.jpg";
+      cwd += "/src/bonus/images-in/" + fileName;
       f = new File(cwd);
       img = ImageIO.read(f);
     } catch (IOException e) {
-      System.out.println(e);
+      System.out.println("File tidak ditemukan.");
     }
 
     BufferedImage padImg = new BufferedImage(img.getWidth() + 4, img.getHeight() + 4, BufferedImage.TYPE_INT_RGB);
@@ -153,84 +151,68 @@ public class ScaleImage {
         if (x == 0 && y == 0) {
           trackX = 0;
           trackY = 0;
-          // System.out.println(trackX + ", " + trackY);
           newImg.setRGB(trackX, trackY, (int) Math.round(bcb.bicubic(subImg,
               getPoint(trackX, trackY), null)));
         } else if (x == 0 && y == padImg.getHeight() - 4) {
           trackX = 0;
           trackY = img.getHeight() * 2 - 1;
-          // System.out.println(trackX + ", " + trackY);
           newImg.setRGB(trackX, trackY, (int) Math.round(bcb.bicubic(subImg,
               getPoint(trackX, trackY), null)));
         } else if (x == padImg.getWidth() - 4 && y == 0) {
           trackX = img.getWidth() * 2 - 1;
           trackY = 0;
-          // System.out.println(trackX + ", " + trackY);
           newImg.setRGB(trackX, trackY, (int) Math.round(bcb.bicubic(subImg,
               getPoint(trackX, trackY), null)));
         } else if (x == padImg.getWidth() - 4 && y == padImg.getHeight() - 4) {
           trackX = img.getWidth() * 2 - 1;
           trackY = img.getHeight() * 2 - 1;
-          // System.out.println(trackX + ", " + trackY);
           newImg.setRGB(trackX, trackY, (int) Math.round(bcb.bicubic(subImg,
               getPoint(trackX, trackY), null)));
         } else if (x == 0) {
           trackX = 0;
           trackY++;
-          // System.out.println(trackX + ", " + trackY);
           newImg.setRGB(trackX, trackY, (int) Math.round(bcb.bicubic(subImg,
               getPoint(trackX, trackY), null)));
           trackY++;
-          // System.out.println(trackX + ", " + trackY);
           newImg.setRGB(trackX, trackY, (int) Math.round(bcb.bicubic(subImg,
               getPoint(trackX, trackY), null)));
         } else if (x == padImg.getWidth() - 4) {
           trackX = img.getWidth() * 2 - 1;
           trackY++;
-          // System.out.println(trackX + ", " + trackY);
           newImg.setRGB(trackX, trackY, (int) Math.round(bcb.bicubic(subImg,
               getPoint(trackX, trackY), null)));
           trackY++;
-          // System.out.println(trackX + ", " + trackY);
           newImg.setRGB(trackX, trackY, (int) Math.round(bcb.bicubic(subImg,
               getPoint(trackX, trackY), null)));
         } else if (y == 0) {
           trackY = 0;
           trackX++;
-          // System.out.println(trackX + ", " + trackY);
           newImg.setRGB(trackX, trackY, (int) Math.round(bcb.bicubic(subImg,
               getPoint(trackX, trackY), null)));
           trackX++;
-          // System.out.println(trackX + ", " + trackY);
           newImg.setRGB(trackX, trackY, (int) Math.round(bcb.bicubic(subImg,
               getPoint(trackX, trackY), null)));
         } else if (y == padImg.getHeight() - 4) {
           trackY = img.getHeight() * 2 - 1;
           trackX--;
-          // System.out.println(trackX + ", " + trackY);
           newImg.setRGB(trackX, trackY, (int) Math.round(bcb.bicubic(subImg,
               getPoint(trackX, trackY), null)));
           trackX++;
-          // System.out.println(trackX + ", " + trackY);
           newImg.setRGB(trackX, trackY, (int) Math.round(bcb.bicubic(subImg,
               getPoint(trackX, trackY), null)));
         } else {
           trackX--;
           trackY++;
-          // System.out.println(trackX + ", " + trackY);
           newImg.setRGB(trackX, trackY, (int) Math.round(bcb.bicubic(subImg,
               getPoint(trackX, trackY), null)));
           trackY++;
-          // System.out.println(trackX + ", " + trackY);
           newImg.setRGB(trackX, trackY, (int) Math.round(bcb.bicubic(subImg,
               getPoint(trackX, trackY), null)));
           trackX++;
           trackY--;
-          // System.out.println(trackX + ", " + trackY);
           newImg.setRGB(trackX, trackY, (int) Math.round(bcb.bicubic(subImg,
               getPoint(trackX, trackY), null)));
           trackY++;
-          // System.out.println(trackX + ", " + trackY);
           newImg.setRGB(trackX, trackY, (int) Math.round(bcb.bicubic(subImg,
               getPoint(trackX, trackY), null)));
         }
@@ -242,11 +224,14 @@ public class ScaleImage {
      */
     cwd = System.getProperty("user.dir");
     try {
-      cwd += "/src/bonus/mawar-out.jpg";
+      cwd += "/src/bonus/images-out/" + fileName;
       f = new File(cwd);
       ImageIO.write(newImg, "jpg", f);
+      System.out.println(
+          "Gambar telah discale menjadi 2x semula. Dapat dilihat di folder /src/bonus/images-out dengan nama file "
+              + fileName);
     } catch (IOException e) {
-      System.out.println(e);
+      System.out.println("Error internal.");
     }
   }
 

@@ -51,15 +51,15 @@ public class Bicubic {
      * Menentukan nilai interpolasi bicubic untuk titik p
      */
     rowCnt = 0;
-    double intpAnswer = 0;
+    double intpResult = 0;
     for (int j = 0; j <= 3; j++) {
       for (int i = 0; i <= 3; i++) {
         double tempRes = (a.getMatrixElement(rowCnt, 0) * Math.pow(p.getAbsis(), i) * Math.pow(p.getOrdinat(), j));
-        intpAnswer += (Double.compare(tempRes, -0.0) == 0 ? Math.abs(tempRes) : tempRes);
+        intpResult += (Double.compare(tempRes, -0.0) == 0 ? Math.abs(tempRes) : tempRes);
         rowCnt++;
       }
     }
 
-    return intpAnswer;
+    return intpResult;
   }
 }

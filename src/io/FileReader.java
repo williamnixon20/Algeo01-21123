@@ -34,6 +34,10 @@ public class FileReader {
     return false;
   }
 
+  public String getFileName() {
+    return this.fileName;
+  }
+
   /**
    * Add the file name at the end of the cwd
    */
@@ -149,5 +153,71 @@ public class FileReader {
 
     p.setSamples(samples);
     return p;
+  }
+
+  public ArrayList<Matrix> readBicubicFromFile() throws FileNotFoundException {
+    ArrayList<Matrix> bcbData = new ArrayList<Matrix>();
+
+    ArrayList<ArrayList<Double>> arr = new ArrayList<ArrayList<Double>>();
+    ArrayList<Double> p = new ArrayList<Double>();
+    boolean isDataValid = true;
+    File file = new File(this.cwd);
+    Scanner scanner = new Scanner(file);
+    boolean endOfFile = false;
+
+    while (isDataValid && scanner.hasNextLine()) {
+      String input = scanner.nextLine();
+      String[] arrOfInput = input.split(" ", -2);
+      ArrayList<Double> tempArr = new ArrayList<Double>();
+
+      if (arrOfInput.length == 4 && !endOfFile) {
+        for (int i = 0; i < arrOfInput.length; i++) {
+          try {
+            tempArr.add(Double.parseDouble(arrOfInput[i]));
+          } catch (NumberFormatException e) {
+            System.out.println("Harap masukkan data yang valid.");
+            isDataValid = false;
+            break;
+          }
+        }
+      } else if (arrOfInput.length == 2 && !endOfFile) {
+        for (int i = 0; i < arrOfInput.length; i++) {
+          try {
+            p.add(Double.parseDouble(arrOfInput[i]));
+            endOfFile = true;
+          } catch (NumberFormatException e) {
+            System.out.println("Harap masukkan data yang valid.");
+            isDataValid = false;
+            break;
+          }
+        }
+      } else {
+        isDataValid = false;
+      }
+
+      if (arrOfInput.length == 4)
+        arr.add(tempArr);
+    }
+
+    int fRowSize = 4, fColSize = 4, pointRowSize = 1, pointColSize = 2;
+    Matrix f = new Matrix(fRowSize, fColSize, false, scanner);
+    Matrix point = new Matrix(pointRowSize, pointColSize, false, scanner);
+
+    if (isDataValid) {
+      f.changeMatrixValidity(true);
+      for (int row = 0; row < fRowSize; row++) {
+        for (int col = 0; col < fColSize; col++) {
+          f.setMatrixElement(row, col, arr.get(row).get(col));
+        }
+      }
+      point.changeMatrixValidity(true);
+      point.setMatrixElement(0, 0, p.get(0));
+      point.setMatrixElement(0, 1, p.get(1));
+
+      bcbData.add(f);
+      bcbData.add(point);
+    }
+
+    return bcbData;
   }
 }
