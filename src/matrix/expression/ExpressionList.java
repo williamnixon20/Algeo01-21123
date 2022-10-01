@@ -30,12 +30,11 @@ public class ExpressionList {
 
     public void simplify() {
         for (int i = 0; i < variables.size(); i++) {
-            // this.print();
+            System.out.println(this.getStringPrint());
             for (int j = i + 1; j < variables.size(); j++) {
                 if (variables.get(i) != null && variables.get(j) != null) {
                     // System.out.println("Currently at" );
-                    // variables.get(i).displayExpression();
-                    // variables.get(j).displayExpression();
+                    // System.out.println(variables.get(i).getDisplayExpression() + " " + variables.get(j).getDisplayExpression());
                     // System.out.println("");
                     if (variables.get(i).addExpression(variables.get(j))) {
                         variables.remove(j);
@@ -45,9 +44,8 @@ public class ExpressionList {
             }
             if (Math.abs(variables.get(i).getNumber()) < EPSILON_IMPRECISION && variables.size() > 1) {
                 variables.remove(i);
+                i-=1;
             }
-            // this.print();
-            // System.out.println("");
         }
     }
 
