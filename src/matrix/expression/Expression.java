@@ -52,13 +52,21 @@ public class Expression {
 
   public String getDisplayExpression() {
     String row = "";
-    if (this.number < 0) row +="(";
+    if (this.number < 0)
+      row += "(";
     if (this.isNumber) {
-      row += String.format("%.2f", this.number);  
+      row += String.format("%.2f", this.number);
     } else {
-      row += String.format("%.2f%s", this.number, this.var);
+      if (Math.abs(this.number - 1) < EPSILON_IMPRECISION) {
+        row += String.format("%s", this.var);
+      } else if (Math.abs((-1) * this.number - 1) < EPSILON_IMPRECISION) {
+        row += String.format("-%s", this.var);
+      } else {
+        row += String.format("%.2f%s", this.number, this.var);
+      }
     }
-    if (this.number < 0) row += ")";
+    if (this.number < 0)
+      row += ")";
     return row;
   }
 }

@@ -19,6 +19,7 @@ public class Lineq {
       /** isFound = telah leading 1 di baris */
       boolean isFound = false;
       int target = baris;
+
       for (int kolom = 0; kolom < colLength; kolom++) {
         /** Menemukan leading 1 di baris ini, buat List baru untuk kolom ini */
         if (!isFound && Math.abs(m.getMatrixElement(baris, kolom) - 1) < EPSILON_IMPRECISION) {
@@ -29,7 +30,7 @@ public class Lineq {
           columnToExpression.put(kolom, newList);
         }
         /** Menemukan nilai bukan leading 1 di baris ini */
-        else if (isFound && Double.compare(m.getMatrixElement(baris, kolom), 1) != 0) {
+        else if (isFound && Double.compare(m.getMatrixElement(baris, kolom), 0) != 0) {
           /**
            * Nilai tak 0 belum memiliki nilai di hashmap, buat agar menjadi parametrik.
            * masukan -1*m[i][j] ke expression leading 1 (target)
@@ -51,7 +52,8 @@ public class Lineq {
             ekspresiVariabelLeading1.addAndSubstitute(multiplier, ekspresiVariabelSubstitusi);
           }
         } else if (Math.abs(m.getMatrixElement(baris, kolom)) < EPSILON_IMPRECISION && kolom == colLength - 1
-            && Double.compare(m.getMatrixElement(baris, colLength), 0) != 0 && !isFound) {
+            && Math.abs(m.getMatrixElement(baris, colLength) - 0) > EPSILON_IMPRECISION && !isFound) {
+          columnToExpression.clear();
           return columnToExpression;
         } else if (!isFound && kolom == colLength - 1) {
           /** Baris 0 semua, jadikan parametrik */
@@ -62,15 +64,17 @@ public class Lineq {
         }
       }
     }
-      /**
+    /**
      * Last run, see if any variables are still null. if so, set as parametric
      */
-    for (int kolom = 0; kolom < rowLength; kolom++) {
-      if (columnToExpression.get(kolom) == null) {
+    if (columnToExpression.size() != colLength) {
+      for (int kolom = 0; kolom < colLength; kolom++) {
+        if (columnToExpression.get(kolom) == null) {
           ExpressionList newList = new ExpressionList();
           newList.addExpression(false, 1, generateParametricVariable(cntParam));
           cntParam++;
           columnToExpression.put(kolom, newList);
+        }
       }
     }
 
@@ -156,7 +160,7 @@ public class Lineq {
     inverse.getMatrixAFromAugmented().writeMatrix();
     if (inverse.getValidity()) {
       Matrix solution = inverse.multiplyMatrix(matrixB);
-      for (int baris = 0; baris < solution.getRowLength() ; baris++) {
+      for (int baris = 0; baris < solution.getRowLength(); baris++) {
         output += String.format("x%d : %.2f\n", baris, solution.getMatrixElement(baris, 0));
       }
     } else {
