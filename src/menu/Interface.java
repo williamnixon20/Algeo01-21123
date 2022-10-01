@@ -27,7 +27,41 @@ public class Interface {
         System.out.println("3. Interpolasi Polinom");
         System.out.println("4. Interpolasi Bicubic");
         System.out.println("5. Image Scaling");
-        System.out.println("6. Keluar\n==============");
+        System.out.println("6: Matriks Balikan (Invers)");
+        System.out.println("7: Determinan");
+        System.out.println("8. Keluar\n==============");
+
+        System.out.print("Masukan: ");
+
+        result = this.scanner.nextInt();
+
+        return result;
+    }
+
+    private int detMenu() {
+        int result = 0;
+
+        System.out.println("\nIngin mencari determinan dengan metode apa?");
+        System.out.println("1. Kofaktor");
+        System.out.println("2. Segitiga Atas");
+        System.out.println("3. Segitiga Bawah");
+        System.out.println("4. Keluar\n==============");
+
+        System.out.print("Masukan: ");
+
+        result = this.scanner.nextInt();
+
+        return result;
+    }
+
+    private int inversMenu() {
+        int result = 0;
+
+        System.out.println("\nIngin mencari invers dengan metode apa?");
+        System.out.println("1. Adjoin");
+        System.out.println("2. OBE");
+        System.out.println("3. OBE (UNSAFE, determinant menuju 0, matriks TIDAK SINGULAR");
+        System.out.println("3. Keluar\n==============");
 
         System.out.print("Masukan: ");
 
@@ -43,8 +77,9 @@ public class Interface {
         System.out.println("1. Gauss");
         System.out.println("2. Gauss-Jordan");
         System.out.println("3. Cramer");
-        System.out.println("4. Invers");
-        System.out.println("5. Kembali\n==============");
+        System.out.println("4. Invers Safe (RECOMMENDED)");
+        System.out.println("5: Invers UNSAFE (Determinan menuju 0, matriks hilbert, MATRIX MUST NOT BE SINGULAR!)");
+        System.out.println("6: Kembali\n==============");
 
         System.out.print("Masukan: ");
 
@@ -104,7 +139,7 @@ public class Interface {
             int menuChoice = this.mainMenu();
             int writeChoice = 2;
 
-            if (menuChoice < 6 & menuChoice != 5) {
+            if (menuChoice < 8 && menuChoice != 8) {
                 writeChoice = this.writeMenu();
             }
 
@@ -118,44 +153,16 @@ public class Interface {
             }
 
             switch (menuChoice) {
-                /** case 0, for testing purposes only */
-                case 0:
-                    int row, col;
-                    System.out.print("Masukkan panjang baris: ");
-                    row = this.scanner.nextInt();
-                    System.out.print("Masukkan panjang kolom: ");
-                    col = this.scanner.nextShort();
-
-                    Matrix baru = new Matrix(row, col, true, scanner);
-                    baru.readMatrix();
-                    baru.writeMatrix();
-                    // System.out.printf("Determinan matriks: %.2f dan lewat metode segitiga %.2f
-                    // %.2f\n",
-                    // baru.getDetWithCofactor(), baru.getDeterminantWithTriangle(true),
-                    // baru.getDeterminantWithTriangle(false));
-                    System.out.println("Matriks inversnya");
-                    baru.getInverse().writeMatrix();
-                    // baru.getInverseWithAdjoin().writeMatrix();
-                    System.out.print("Masukkan panjang baris: ");
-                    row = this.scanner.nextInt();
-                    System.out.print("Masukkan panjang kolom: ");
-                    col = this.scanner.nextShort();
-                    Matrix baru2 = new Matrix(row, col, true, scanner);
-                    baru2.readMatrix();
-                    baru.multiplyMatrix(baru2).writeMatrix();
-                    // baru.toRREF();
-                    // baru.writeMatrix();
-                    break;
                 case 1:
                     int splChoice = this.splMenu();
-                    if (splChoice == 5)
+                    if (splChoice == 6)
                         break;
                     Matrix m;
                     int inputChoice2 = inputChoiceMenu();
                     if (inputChoice2 == 1) {
-                        System.out.print("Masukkan panjang baris matriks augmented: ");
+                        System.out.print("Masukkan panjang baris matriks AUGMENTED: ");
                         int row2 = this.scanner.nextInt();
-                        System.out.print("Masukkan panjang kolom matriks augmented: ");
+                        System.out.print("Masukkan panjang kolom matriks AUGMENTED: ");
                         int col2 = this.scanner.nextShort();
                         m = new Matrix(row2, col2, true, this.scanner);
                         m.readMatrix();
@@ -183,6 +190,9 @@ public class Interface {
                             break;
                         case 4:
                             leq.doInverse(m, writeChoice, fileWriter);
+                            break;
+                        case 5:
+                            leq.doInverseUnsafe(m, writeChoice, fileWriter);
                             break;
                     }
                     break;
@@ -305,6 +315,92 @@ public class Interface {
                     scaleImg.scaleImage(fileName);
                     break;
                 case 6:
+                    int inversChoice = inversMenu();
+                    inputChoice = inputChoiceMenu();
+                    keluar = false;
+                    Matrix m2 = new Matrix(0, 0, false, this.scanner);
+                    switch (inputChoice) {
+                        case 1:
+                            System.out.print("Masukkan dimensi matriks persegi (nxn): ");
+                            int row2 = this.scanner.nextInt();
+                            m2 = new Matrix(row2, row2, true, this.scanner);
+                            m2.readMatrix();
+                            break;
+                        case 2:
+                            if (fileReader.setFileName(scanner)) {
+                            m2 = fileReader.readMatrix();
+                            if (m2.getValidity() == false) {
+                                break;
+                            }
+                            } else {
+                                System.out.println("File tidak ditemukan.");
+                                break;
+                            }
+                            break;
+                        default:
+                            keluar = true;
+                            break;
+                    }
+                    if (keluar) break;
+
+                    switch (inversChoice) {
+                        case 1:
+                            m2.getInverseWithAdjoin().writeMatrix(writeChoice, fileWriter);
+                            break;
+                        case 2:
+                            m2.getInverse().writeMatrix(writeChoice, fileWriter);
+                            break;
+                        case 3:
+                            m2.getInverseUnsafe().writeMatrix(writeChoice, fileWriter);
+                            break;
+                    }
+                    break;
+                case 7:
+                    int detChoice = detMenu();
+                    inputChoice = inputChoiceMenu();
+                    keluar = false;
+                    Matrix m3 = new Matrix(0, 0, false, this.scanner);
+                    switch (inputChoice) {
+                        case 1:
+                            System.out.print("Masukkan dimensi matriks persegi (nxn): ");
+                            int row2 = this.scanner.nextInt();
+                            m3 = new Matrix(row2, row2, true, this.scanner);
+                            m3.readMatrix();
+                            break;
+                        case 2:
+                            if (fileReader.setFileName(scanner)) {
+                            m3 = fileReader.readMatrix();
+                            if (m3.getValidity() == false) {
+                                break;
+                            }
+                            } else {
+                                System.out.println("File tidak ditemukan.");
+                                break;
+                            }
+                            break;
+                        default:
+                            keluar = true;
+                            break;
+                    }
+                    if (keluar) break;
+                    String row = "Determinan matriks anda adalah: ";
+                    switch (detChoice) {
+                        case 1:
+                            row += m3.getDetWithCofactor();
+                            break;
+                        case 2:
+                            row += m3.getDeterminantWithTriangle(true);
+                            break;
+                        case 3:
+                            row += m3.getDeterminantWithTriangle(false);
+                            break;
+                    }
+                    System.out.println(row);
+                    if (writeChoice == 1) {
+                        fileWriter.writeFile(row);
+                    }
+                    break;
+                case 8:
                     active = false;
                     break;
                 default:

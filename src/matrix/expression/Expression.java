@@ -36,6 +36,11 @@ public class Expression {
     this.number *= constant;
   }
 
+  /**
+   * Menyederhakan ekspresi jika tipe variabel sama
+   * @param b
+   * @return
+   */
   public boolean addExpression(Expression b) {
     if (this.isNumber == true && b.isNumber == true) {
       this.number += b.getNumber();
@@ -50,6 +55,10 @@ public class Expression {
     return false;
   }
 
+  /**
+   * Display ekspresi, jika - maka dengan tanda kurung
+   * @return
+   */
   public String getDisplayExpression() {
     String row = "";
     if (this.number < 0)
