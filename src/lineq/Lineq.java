@@ -65,7 +65,7 @@ public class Lineq {
       /**
      * Last run, see if any variables are still null. if so, set as parametric
      */
-    for (int kolom = 0; kolom <= rowLength; kolom++) {
+    for (int kolom = 0; kolom < rowLength; kolom++) {
       if (columnToExpression.get(kolom) == null) {
           ExpressionList newList = new ExpressionList();
           newList.addExpression(false, 1, generateParametricVariable(cntParam));
@@ -117,6 +117,7 @@ public class Lineq {
 
   public HashMap<Integer, ExpressionList> Gauss(Matrix m) {
     m.toREF();
+    m.writeMatrix();
     return getSolution(m);
   }
 
@@ -152,6 +153,7 @@ public class Lineq {
     Matrix inverse = m.getMatrixAFromAugmented().getInverse();
     Matrix matrixB = m.getMatrixBFromAugmented();
     String output = "";
+    inverse.getMatrixAFromAugmented().writeMatrix();
     if (inverse.getValidity()) {
       Matrix solution = inverse.multiplyMatrix(matrixB);
       for (int baris = 0; baris < solution.getRowLength() ; baris++) {

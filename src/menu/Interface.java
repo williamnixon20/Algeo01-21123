@@ -166,13 +166,25 @@ public class Interface {
                     int splChoice = this.splMenu();
                     if (splChoice == 5)
                         break;
-
                     Matrix m;
-                    if (fileReader.setFileName(scanner)) {
-                        m = fileReader.readMatrix();
+                    int inputChoice2 = inputChoiceMenu();
+                    if (inputChoice2 == 1) {
+                        System.out.print("Masukkan panjang baris matriks augmented: ");
+                        int row2 = this.scanner.nextInt();
+                        System.out.print("Masukkan panjang kolom matriks augmented: ");
+                        int col2 = this.scanner.nextShort();
+                        m = new Matrix(row2, col2, true, this.scanner);
+                        m.readMatrix();
                     } else {
-                        System.out.println("File tidak ditemukan.");
-                        break;
+                        if (fileReader.setFileName(scanner)) {
+                            m = fileReader.readMatrix();
+                            if (m.getValidity() == false) {
+                                break;
+                            }
+                        } else {
+                            System.out.println("File tidak ditemukan.");
+                            break;
+                        }
                     }
                     Lineq leq = new Lineq();
                     switch (splChoice) {
