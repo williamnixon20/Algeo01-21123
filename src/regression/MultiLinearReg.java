@@ -8,10 +8,20 @@ import matrix.Matrix;
 import matrix.expression.ExpressionList;
 import lineq.Lineq;
 
+/**
+ * Kelas untuk multi variabel linear regression.
+ */
 public class MultiLinearReg {
 
     /**
-     * Melakukan multiple linear regression untuk mencari estimasi nilai
+     * Driver multi linear regresion.
+     * Melakukan multiple linear regression untuk mencari estimasi nilai.
+     * Menggunakan fungsi getNEE untuk mengubah data menjadi normal estimation
+     * dan gauss jordan untuk mendapatkan solusinya.
+     * @param data
+     * @param scanner
+     * @param writeChoice
+     * @param fileWriter
      */
     public void doMultiLinearReg(Matrix data, Scanner scanner, int writeChoice, FileTulis fileWriter) {
         Matrix NEE;
@@ -162,9 +172,6 @@ public class MultiLinearReg {
      * @return Estimasi nilai dari refData
      */
     private double getEstimatedValue(HashMap<Integer, ExpressionList> solution, double[] refData, Scanner scanner) {
-        // System.out.println("Normal Estimated Eq: \n");
-        // MultiLinearRegSolution.writeMatrix();
-
         double estimatedValue = solution.get(0).getVariable(0).getNumber();
         for (int idx = 1; idx < solution.size(); idx++) {
             estimatedValue += refData[idx - 1] * solution.get(idx).getVariable(0).getNumber();

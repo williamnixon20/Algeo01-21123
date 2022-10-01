@@ -67,7 +67,6 @@ public class Lineq {
     /**
      * Last run, see if any variables are still null. if so, set as parametric
      */
-    if (columnToExpression.size() != colLength) {
       for (int kolom = 0; kolom < colLength; kolom++) {
         if (columnToExpression.get(kolom) == null) {
           ExpressionList newList = new ExpressionList();
@@ -76,7 +75,6 @@ public class Lineq {
           columnToExpression.put(kolom, newList);
         }
       }
-    }
 
     return columnToExpression;
   }
