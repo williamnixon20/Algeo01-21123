@@ -2,7 +2,6 @@ package lineq;
 
 import java.util.HashMap;
 import java.lang.Math;
-import java.nio.file.attribute.FileOwnerAttributeView;
 
 import io.FileTulis;
 import matrix.Matrix;
