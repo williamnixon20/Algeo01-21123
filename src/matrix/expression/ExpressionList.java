@@ -40,7 +40,7 @@ public class ExpressionList {
      */
     public void simplify() {
         for (int i = 0; i < variables.size(); i++) {
-            System.out.println(this.getStringPrint());
+            // System.out.println(this.getStringPrint());
             for (int j = i + 1; j < variables.size(); j++) {
                 if (variables.get(i) != null && variables.get(j) != null) {
                     // System.out.println("Currently at" );

@@ -8,7 +8,7 @@ import matrix.coordinate.*;
 public class Matrix {
   public int MAX_DIMENSION = 1000;
   public int VAL_UNDEF = 99999999;
-  public double EPSILON_IMPRECISION = 0.000000000000001;
+  public double EPSILON_IMPRECISION = 0.00000000000000001;
   /**
    * private artinya tidak bisa diakses dari luar
    * segala interaksi dengan field harus dilakukan dengan fungsi di kelas matriks
@@ -634,6 +634,9 @@ public class Matrix {
     return mOut;
   }
 
+  /**
+   * Mengmbalikan adjoin dari matriks
+   */
   public Matrix getAdjoin() {
     Matrix kofaktor = this.getMatrixCofactor();
     Matrix adjoin = kofaktor.tranpose();
