@@ -41,25 +41,40 @@ public class ScaleImage {
     File f = null;
 
     /**
-     * Baca gambar
+     * Baca citra
      */
     String cwdIn = System.getProperty("user.dir");
     String cwdOut = System.getProperty("user.dir");
     String fileName = "anya";
     String fileExtension = "jpg";
     try {
+      /**
+       * Esktrak nama dan format citra
+       */
       fileName = file.split("\\.", 2)[0];
       fileExtension = file.split("\\.", 2)[1];
+
+      /**
+       * Membangun citra awal
+       */
       cwdIn += "/test/bonus/images-in/" + fileName + "." + fileExtension;
       f = new File(cwdIn);
       img = ImageIO.read(f);
     } catch (Exception e) {
-      System.out.println("File tidak ditemukan.");
+      System.out.println("Citra tidak ditemukan.");
+      return;
+    }
+
+    /**
+     * Ceck apakah format citra valid
+     */
+    if (!fileExtension.equals("jpg") && !fileExtension.equals("png")) {
+      System.out.println("Format citra tidak didukung.");
       return;
     }
 
     System.out.println(
-        "Gambar sedang diproses! Mohon bersabar ya... Mungkin 1-2 menit jika gambar anda high quality atau besar dimensinya (gambar tidak harus grayscale)");
+        "Citra sedang diproses! Mohon bersabar ya... Mungkin 1-2 menit jika citra anda high quality atau besar dimensinya (citra tidak harus grayscale)");
 
     BufferedImage padImg = new BufferedImage(img.getWidth() + 4, img.getHeight() + 4, BufferedImage.TYPE_INT_RGB);
     BufferedImage newImg = new BufferedImage(img.getWidth() * 2, img.getHeight() * 2, BufferedImage.TYPE_INT_RGB);
@@ -146,7 +161,7 @@ public class ScaleImage {
     }
 
     /**
-     * Hitung bicubic interpolasi sekaligus membangun gambar hasil scaling
+     * Hitung bicubic interpolasi sekaligus membangun citra hasil scaling
      */
     Bicubic bcb = new Bicubic();
     int trackX = -1, trackY = -1;
@@ -230,12 +245,9 @@ public class ScaleImage {
     }
 
     /**
-     * Tulis gambar
+     * Tulis citra hasil perbesaran
      */
     try {
-      /**
-       * Mengekstrak ekstensi file
-       */
       cwdOut += "/test/bonus/images-out/" + fileName + "-out." + fileExtension;
       f = new File(cwdOut);
       ImageIO.write(newImg, fileExtension, f);
