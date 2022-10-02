@@ -20,8 +20,11 @@ public class ExpressionList {
     }
 
     /**
-     * Mengalikan semua variabel dalam list substituent dan memasukkanya ke ekspresi ini
-     * Mirip operasi OBE, tapi untuk parametrik dan substitusi balik gauss/gaussjordan
+     * Mengalikan semua variabel dalam list substituent dan memasukkanya ke ekspresi
+     * ini
+     * Mirip operasi OBE, tapi untuk parametrik dan substitusi balik
+     * gauss/gaussjordan
+     * 
      * @param multiplier
      * @param substituent
      */
@@ -44,7 +47,8 @@ public class ExpressionList {
             for (int j = i + 1; j < variables.size(); j++) {
                 if (variables.get(i) != null && variables.get(j) != null) {
                     // System.out.println("Currently at" );
-                    // System.out.println(variables.get(i).getDisplayExpression() + " " + variables.get(j).getDisplayExpression());
+                    // System.out.println(variables.get(i).getDisplayExpression() + " " +
+                    // variables.get(j).getDisplayExpression());
                     // System.out.println("");
                     if (variables.get(i).addExpression(variables.get(j))) {
                         variables.remove(j);
@@ -54,13 +58,14 @@ public class ExpressionList {
             }
             if (Math.abs(variables.get(i).getNumber()) < EPSILON_IMPRECISION && variables.size() > 1) {
                 variables.remove(i);
-                i-=1;
+                i -= 1;
             }
         }
     }
 
     /**
      * Mendapatkan representasi string yang akan di print dari suatu expr list
+     * 
      * @return
      */
     public String getStringPrint() {
@@ -70,7 +75,8 @@ public class ExpressionList {
         for (Expression e : this.variables) {
             if (!isFirst) {
                 if (Math.abs(e.getNumber()) > EPSILON_IMPRECISION) {
-                    if (printedBefore) row += " + ";
+                    if (printedBefore)
+                        row += " + ";
                 } else {
                     continue;
                 }

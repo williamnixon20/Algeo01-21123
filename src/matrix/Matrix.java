@@ -90,8 +90,10 @@ public class Matrix {
   public double getMatrixElement(int row, int col) {
     return this.mat[row][col];
   }
+
   /**
    * Rubah validitas matrix
+   * 
    * @param isValid
    */
   public void changeMatrixValidity(boolean isValid) {
@@ -156,9 +158,10 @@ public class Matrix {
     return baru;
   }
 
-
   /**
-   * Mendapatkan matriks A dari AX = B di dari bentuk matriks augmented (matriks kiri)
+   * Mendapatkan matriks A dari AX = B di dari bentuk matriks augmented (matriks
+   * kiri)
+   * 
    * @return
    */
   public Matrix getMatrixAFromAugmented() {
@@ -172,7 +175,9 @@ public class Matrix {
   }
 
   /**
-   * Mendapatkan matriks B dari AX= B dari bentruk matriks augmented (matriks kanan)
+   * Mendapatkan matriks B dari AX= B dari bentruk matriks augmented (matriks
+   * kanan)
+   * 
    * @return
    */
   public Matrix getMatrixBFromAugmented() {
@@ -250,6 +255,7 @@ public class Matrix {
 
   /**
    * Perkalian matriks this dan m2
+   * 
    * @param m2
    * @return
    */
@@ -269,9 +275,11 @@ public class Matrix {
   };
 
   /**
+   * Mendapatkan indeks kolom elemen tak nol pertama suatu baris
+   * 
    * @param row indeks baris yang akan dicari indeks letak leading koefisiennya
    * @return indeks kolom dari leading koefisiennya, jika
-   *         baris nol semua
+   *         baris nol semua, maka menghasilkan VAL_UNDEF
    */
   public int getLeadingCoeffIdx(int row) {
     for (int col = 0; col < getColLength(); col++) {
@@ -296,6 +304,9 @@ public class Matrix {
   }
 
   /**
+   * Mendapatkan koordinat (indeks baris, indeks kolom) dari baris
+   * [startRow..getRowLastIdx] yang memiliki
+   * elemen tak nol paling kiri
    * 
    * @param startRow baris awal mulai pengecekan pivot
    * @return Koordinat matriks dari pivot, elemen dengan leading koefisien paling
@@ -332,7 +343,6 @@ public class Matrix {
 
     return pivot;
   }
-
 
   /**
    * Mengubah matriks ke dalam row echelon form
@@ -389,6 +399,7 @@ public class Matrix {
 
   /**
    * Mengubah matriks menjadi REF, memanipulasi matriks inverse juga
+   * 
    * @param inverse
    */
   public void toREFWithInverse(Matrix inverse) {
@@ -430,6 +441,7 @@ public class Matrix {
 
   /**
    * Mengubah matriks menjadi RREF, memanipulasi invers juga
+   * 
    * @param inverse
    */
   public void toRREFWithInverse(Matrix inverse) {
@@ -480,6 +492,7 @@ public class Matrix {
 
   /**
    * Convert matrix to lower triangle, returns the number of swaps done
+   * 
    * @return
    */
   public int toLowerTriangle() {
@@ -509,6 +522,7 @@ public class Matrix {
 
   /**
    * Mencari determinant dengan metode segitiga atas/bawah
+   * 
    * @param isUpper
    * @return
    */
@@ -531,10 +545,11 @@ public class Matrix {
   }
 
   /**
+   * Menghitung kofaktor dari submatriks
    * 
    * @param refRow baris yang akan dihilangkan dalam perhitungan
    * @param refCol kolom yang akan dihilangkan dalam perhitungan
-   * @return kofaktor dari refRow dan refCol
+   * @return kofaktor dari submatriks
    */
   public double getCofactor(int refRow, int refCol) {
     Matrix m = new Matrix(getRowLength() - 1, getColLength() - 1, true, this.scanner);
@@ -554,6 +569,7 @@ public class Matrix {
 
   /**
    * Note: menggunakan rekursi sehingga mungkin lambat
+   * 
    * @return determinan Matriks dengan metode kofaktor
    */
   public double getDetWithCofactor() {
@@ -577,6 +593,7 @@ public class Matrix {
 
   /**
    * Mendapatkan inverse dengan metode OBE
+   * 
    * @return
    */
   public Matrix getInverse() {
@@ -592,7 +609,8 @@ public class Matrix {
   }
 
   /**
-   * Mendapatkan inverse dengan metode OBE, tanpa pengecekan determinan terlebih dahulu.
+   * Mendapatkan inverse dengan metode OBE, tanpa pengecekan determinan terlebih
+   * dahulu.
    * Dilakukan untuk matriks yang determinannya menuju 0 (matriks hilbert)
    * atau jika memerlukan komputasi cepat (soal bonus)
    */
@@ -610,6 +628,7 @@ public class Matrix {
 
   /**
    * Mendapat matriks kofaktor
+   * 
    * @return
    */
   public Matrix getMatrixCofactor() {
@@ -645,10 +664,11 @@ public class Matrix {
 
   /**
    * Inverse dengan adjoin
+   * 
    * @return
    */
   public Matrix getInverseWithAdjoin() {
-    if (!isSquare() ||  Math.abs(getDeterminantWithTriangle(true)) < EPSILON_IMPRECISION) {
+    if (!isSquare() || Math.abs(getDeterminantWithTriangle(true)) < EPSILON_IMPRECISION) {
       System.out.println("Matriks tidak mempunyai invers!");
       return new Matrix(0, 0, false, this.scanner);
     }

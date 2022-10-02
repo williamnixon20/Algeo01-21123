@@ -15,14 +15,18 @@ public class MultiLinearReg {
 
     /**
      * Driver multi linear regresion.
-     * Melakukan multiple linear regression untuk mencari estimasi nilai.
+     * Melakukan multiple linear regression untuk mencari estimasi nilai, menerima
+     * input banyak sampel yang akan diestimasi dan nilai-nilai yang akan diestimasi
      * Menggunakan fungsi getNEE untuk mengubah data menjadi normal estimation
      * dan gauss jordan untuk mendapatkan solusinya.
      * 
-     * @param data
-     * @param scanner
-     * @param writeChoice
-     * @param fileWriter
+     * @param data        Data yang akan diregresi dalam bentuk matriks augmented [A
+     *                    | b] dengan A merupakan nilai-nilai xk dan b merupakan
+     *                    nilai y
+     * @param scanner     Scanner untuk matriks dan estimasi nilai
+     * @param writeChoice Bentuk output. 1 untuk output pada CLI dan 2 untuk
+     *                    menuliskan output pada FILE
+     * @param fileWriter  FileTulis untuk menuliskan output pada FILE
      */
     public void doMultiLinearReg(Matrix data, Scanner scanner, int writeChoice, FileTulis fileWriter) {
         Matrix NEE;
@@ -108,12 +112,14 @@ public class MultiLinearReg {
     }
 
     /**
-     * Mendapatkan sigma dari xk * xi
+     * Mendapatkan sum of product yaitu sigma dari xpi * xqi
      * 
-     * @param data         data yang akan dilakukan regresi
-     * @param firstVarIdx  variabel pertama
-     * @param secondVarIdx variabel kedua
-     * @return sigma dari xk * xi
+     * @param data         Data yang akan diregresi dalam bentuk matriks augmented
+     *                     [A | b] dengan A merupakan nilai-nilai xk dan b merupakan
+     *                     nilai y
+     * @param firstVarIdx  Variabel pertama p [0..k]. Jika p = 0, maka xpi = 1
+     * @param secondVarIdx Variabel kedua q [0..k]. Jika q = 0, maka xqi = 1
+     * @return Sigma dari xpi * xqi
      */
     private double getSOP(Matrix data, int firstVarIdx, int secondVarIdx) {
         double sum = 0;
@@ -144,8 +150,8 @@ public class MultiLinearReg {
      * Mendapatkan Normal Estimation Equation untuk Multiple Linear Regression dari
      * data
      * 
-     * @param data    data yang akan dilakukan regresi
-     * @param scanner
+     * @param data    Data yang akan dilakukan regresi
+     * @param scanner Scanner untuk matriks
      * @return Matriks Normal Estimation Equation untuk Multiple Linear Regression
      */
     private Matrix getNEE(Matrix data, Scanner scanner) {
@@ -164,13 +170,12 @@ public class MultiLinearReg {
     /**
      * Mendapatkan estimasi nilai dari refData
      * 
-     * @param MultiLinearRegSolution Matrix solusi dari multi linear regression yang
-     *                               merupakan Matrix eselon baris tereduksi dari
-     *                               Normal Estimation Equation
-     * @param refData                data yang akan dicari estimasi nilainya. Banyak
-     *                               peubah sama
-     *                               dengan banyak peubah pada data
-     * @param scanner
+     * @param solution Solusi dari multi linear regression yang
+     *                 merupakan Matrix eselon baris tereduksi dari
+     *                 Normal Estimation Equation
+     * @param refData  data yang akan dicari estimasi nilainya. Prekondisi: banyak
+     *                 peubah (xk) sama dengan banyak peubah (xk) pada data
+     * @param scanner` Scanner untuk matrix
      * @return Estimasi nilai dari refData
      */
     private double getEstimatedValue(HashMap<Integer, ExpressionList> solution, double[] refData, Scanner scanner) {
