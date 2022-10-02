@@ -173,7 +173,7 @@ public class Lineq {
       for (int col = 0; col < matrixA.getColLength(); col++) {
         Matrix substitute = matrixA.substituteCramer(matrixB, col);
         double determinantX = substitute.getDeterminantWithTriangle(true);
-        output += String.format("x%d : %.2f\n", col+1, determinantX / determinantA);
+        output += String.format("x%d : %.2f\n", col + 1, determinantX / determinantA);
       }
     }
     System.out.print(output);
@@ -189,7 +189,7 @@ public class Lineq {
     if (inverse.getValidity()) {
       Matrix solution = inverse.multiplyMatrix(matrixB);
       for (int baris = 0; baris < solution.getRowLength(); baris++) {
-        output += String.format("x%d : %.2f\n", baris+1, solution.getMatrixElement(baris, 0));
+        output += String.format("x%d : %.2f\n", baris + 1, solution.getMatrixElement(baris, 0));
       }
     } else {
       output += ("Matrix tidak punya invers (singular) sehingga tidak bisa diperoleh solusinya lewat metode invers.\n");
@@ -206,7 +206,7 @@ public class Lineq {
     String output = "";
     Matrix solution = inverse.multiplyMatrix(matrixB);
     for (int baris = 0; baris < solution.getRowLength(); baris++) {
-      output += String.format("x%d : %.2f\n", baris+1, solution.getMatrixElement(baris, 0));
+      output += String.format("x%d : %.2f\n", baris + 1, solution.getMatrixElement(baris, 0));
     }
     System.out.print(output);
     if (writeChoice == 1) {
