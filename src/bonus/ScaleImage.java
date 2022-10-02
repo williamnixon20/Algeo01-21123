@@ -2,6 +2,7 @@ package bonus;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 // import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.Color;
@@ -35,23 +36,30 @@ public class ScaleImage {
     }
   }
 
-  public void scaleImage(String fileName) throws IOException {
+  public void scaleImage(String file) throws IOException {
     BufferedImage img = null;
     File f = null;
 
     /**
      * Baca gambar
      */
-    String cwd = System.getProperty("user.dir");
+    String cwdIn = System.getProperty("user.dir");
+    String cwdOut = System.getProperty("user.dir");
+    String fileName = "anya";
+    String fileExtension = "jpg";
     try {
-      cwd += "/test/bonus/images-in/" + fileName;
-      f = new File(cwd);
+      fileName = file.split("\\.", 2)[0];
+      fileExtension = file.split("\\.", 2)[1];
+      cwdIn += "/test/bonus/images-in/" + fileName + "." + fileExtension;
+      f = new File(cwdIn);
       img = ImageIO.read(f);
-    } catch (IOException e) {
+    } catch (Exception e) {
       System.out.println("File tidak ditemukan.");
+      return;
     }
 
-    System.out.println("Gambar sedang diproses! Mohon bersabar ya... Mungkin 1-2 menit jika gambar anda high quality atau besar dimensinya (gambar tidak harus grayscale)");
+    System.out.println(
+        "Gambar sedang diproses! Mohon bersabar ya... Mungkin 1-2 menit jika gambar anda high quality atau besar dimensinya (gambar tidak harus grayscale)");
 
     BufferedImage padImg = new BufferedImage(img.getWidth() + 4, img.getHeight() + 4, BufferedImage.TYPE_INT_RGB);
     BufferedImage newImg = new BufferedImage(img.getWidth() * 2, img.getHeight() * 2, BufferedImage.TYPE_INT_RGB);
@@ -224,14 +232,16 @@ public class ScaleImage {
     /**
      * Tulis gambar
      */
-    cwd = System.getProperty("user.dir");
     try {
-      cwd += "/test/bonus/images-out/" + fileName;
-      f = new File(cwd);
-      ImageIO.write(newImg, "jpg", f);
+      /**
+       * Mengekstrak ekstensi file
+       */
+      cwdOut += "/test/bonus/images-out/" + fileName + "-out." + fileExtension;
+      f = new File(cwdOut);
+      ImageIO.write(newImg, fileExtension, f);
       System.out.println(
-          "Gambar telah discale menjadi 2x semula. Dapat dilihat di folder /test/bonus/images-out dengan nama file "
-              + fileName);
+          "Gambar telah discale menjadi 2x semula. Hasil dapat dilihat di folder /test/bonus/images-out dengan nama file "
+              + fileName + "-out." + fileExtension);
     } catch (IOException e) {
       System.out.println("Error internal.");
     }
