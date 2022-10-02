@@ -159,8 +159,25 @@ public class Lineq {
       for (int col = 0; col < matrixA.getColLength(); col++) {
         Matrix substitute = matrixA.substituteCramer(matrixB, col);
         double determinantX = substitute.getDeterminantWithTriangle(true);
-        output += String.format("x%d : %.2f\n", col, determinantX / determinantA);
+        output += String.format("x%d : %.2f\n", col+1, determinantX / determinantA);
       }
+    }
+    System.out.print(output);
+    if (writeChoice == 1) {
+      fileWriter.writeFile(output);
+    }
+  }
+
+  public void doCramerUnsafe(Matrix m, int writeChoice, FileTulis fileWriter) {
+    Matrix matrixA = m.getMatrixAFromAugmented();
+    Matrix matrixB = m.getMatrixBFromAugmented();
+    double determinantA = matrixA.getDeterminantWithTriangle(true);
+
+    String output = "";
+    for (int col = 0; col < matrixA.getColLength(); col++) {
+      Matrix substitute = matrixA.substituteCramer(matrixB, col);
+      double determinantX = substitute.getDeterminantWithTriangle(true);
+      output += String.format("x%d : %.2f\n", col+1, determinantX / determinantA);
     }
     System.out.print(output);
     if (writeChoice == 1) {
@@ -175,7 +192,7 @@ public class Lineq {
     if (inverse.getValidity()) {
       Matrix solution = inverse.multiplyMatrix(matrixB);
       for (int baris = 0; baris < solution.getRowLength(); baris++) {
-        output += String.format("x%d : %.2f\n", baris, solution.getMatrixElement(baris, 0));
+        output += String.format("x%d : %.2f\n", baris+1, solution.getMatrixElement(baris, 0));
       }
     } else {
       output += ("Matrix tidak punya invers (singular) sehingga tidak bisa diperoleh solusinya lewat metode invers.\n");
@@ -190,10 +207,9 @@ public class Lineq {
     Matrix inverse = m.getMatrixAFromAugmented().getInverseUnsafe();
     Matrix matrixB = m.getMatrixBFromAugmented();
     String output = "";
-    inverse.getMatrixAFromAugmented().writeMatrix(2, null);
     Matrix solution = inverse.multiplyMatrix(matrixB);
     for (int baris = 0; baris < solution.getRowLength(); baris++) {
-      output += String.format("x%d : %.2f\n", baris, solution.getMatrixElement(baris, 0));
+      output += String.format("x%d : %.2f\n", baris+1, solution.getMatrixElement(baris, 0));
     }
     System.out.print(output);
     if (writeChoice == 1) {

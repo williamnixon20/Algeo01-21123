@@ -76,10 +76,11 @@ public class Interface {
         System.out.println("\nSilakan pilih metode yang anda inginkan");
         System.out.println("1. Gauss");
         System.out.println("2. Gauss-Jordan");
-        System.out.println("3. Cramer");
-        System.out.println("4. Invers Safe (RECOMMENDED)");
-        System.out.println("5: Invers UNSAFE (Determinan menuju 0, matriks hilbert, MATRIX MUST NOT BE SINGULAR!)");
-        System.out.println("6: Kembali\n==============");
+        System.out.println("3. Cramer Safe (RECOMMENDED)");
+        System.out.println("4. Cramer UNSAFE (Determinan menuju 0, matriks hilbert, MATRIX MUST NOT BE SINGULAR!)");
+        System.out.println("5. Invers Safe (RECOMMENDED)");
+        System.out.println("6: Invers UNSAFE (Determinan menuju 0, matriks hilbert, MATRIX MUST NOT BE SINGULAR!)");
+        System.out.println("7: Kembali\n==============");
 
         System.out.print("Masukan: ");
 
@@ -155,7 +156,7 @@ public class Interface {
             switch (menuChoice) {
                 case 1:
                     int splChoice = this.splMenu();
-                    if (splChoice == 6)
+                    if (splChoice == 7)
                         break;
                     Matrix m;
                     int inputChoice2 = inputChoiceMenu();
@@ -190,9 +191,13 @@ public class Interface {
                             leq.doCramer(m, writeChoice, fileWriter);
                             break;
                         case 4:
-                            leq.doInverse(m, writeChoice, fileWriter);
+                            leq.doCramerUnsafe(m, writeChoice, fileWriter);
                             break;
                         case 5:
+                            leq.doInverse(m, writeChoice, fileWriter);
+                            break;
+                        case 6:
+                            System.out.println("hi");
                             leq.doInverseUnsafe(m, writeChoice, fileWriter);
                             break;
                     }
