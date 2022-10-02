@@ -3,6 +3,7 @@ package menu;
 import java.io.IOException;
 
 import java.util.Scanner;
+import java.util.ArrayList;
 
 import bonus.ScaleImage;
 import interpolation.Bicubic;
@@ -221,12 +222,15 @@ public class Interface {
                             data = new Matrix(sampleCount, varCount + 1, true, scanner);
                             System.out.println("\nInput data dalam bentuk matriks augmented [xk | y]");
                             data.readMatrix();
-                            mlr.doMultiLinearReg(data, scanner, writeChoice, this.fileWriter);
+                            mlr.doMultiLinearRegKey(data, scanner, writeChoice, fileWriter);
                             break;
                         case 2:
                             if (fileReader.setFileName(scanner)) {
-                                data = fileReader.readMatrix();
-                                mlr.doMultiLinearReg(data, scanner, writeChoice, this.fileWriter);
+                                ArrayList<Matrix> mlrData = fileReader.readMLRFromFile();
+                                if (mlrData.get(0).getValidity() && mlrData.get(1).getValidity()) {
+                                    mlr.doMultiLinearRegFile(mlrData.get(0), mlrData.get(1), scanner, writeChoice,
+                                            this.fileWriter);
+                                }
                             } else {
                                 System.out.println("File tidak ditemukan.");
                             }
