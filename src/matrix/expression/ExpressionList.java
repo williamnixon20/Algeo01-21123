@@ -19,6 +19,12 @@ public class ExpressionList {
         this.variables.add(variable);
     }
 
+    /**
+     * Mengalikan semua variabel dalam list substituent dan memasukkanya ke ekspresi ini
+     * Mirip operasi OBE, tapi untuk parametrik dan substitusi balik gauss/gaussjordan
+     * @param multiplier
+     * @param substituent
+     */
     public void addAndSubstitute(double multiplier, ExpressionList substituent) {
         for (Expression e : substituent.variables) {
             Expression multiplied = new Expression(e.getIsNumber(), e.getNumber() * multiplier, e.getVar());
@@ -28,14 +34,17 @@ public class ExpressionList {
         }
     }
 
+    /**
+     * Simplifikasi term yang ada di dalam expr list
+     * Misalnyaa a + a = 2a
+     */
     public void simplify() {
         for (int i = 0; i < variables.size(); i++) {
-            // this.print();
+            System.out.println(this.getStringPrint());
             for (int j = i + 1; j < variables.size(); j++) {
                 if (variables.get(i) != null && variables.get(j) != null) {
                     // System.out.println("Currently at" );
-                    // variables.get(i).displayExpression();
-                    // variables.get(j).displayExpression();
+                    // System.out.println(variables.get(i).getDisplayExpression() + " " + variables.get(j).getDisplayExpression());
                     // System.out.println("");
                     if (variables.get(i).addExpression(variables.get(j))) {
                         variables.remove(j);
@@ -45,12 +54,15 @@ public class ExpressionList {
             }
             if (Math.abs(variables.get(i).getNumber()) < EPSILON_IMPRECISION && variables.size() > 1) {
                 variables.remove(i);
+                i-=1;
             }
-            // this.print();
-            // System.out.println("");
         }
     }
 
+    /**
+     * Mendapatkan representasi string yang akan di print dari suatu expr list
+     * @return
+     */
     public String getStringPrint() {
         boolean printedBefore = false;
         boolean isFirst = true;

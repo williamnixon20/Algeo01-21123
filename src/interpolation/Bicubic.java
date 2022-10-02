@@ -45,7 +45,7 @@ public class Bicubic {
     /*
      * Menentukan matriks yang berisi nilai a_ij (vektor a)
      */
-    a = x.getInverse().multiplyMatrix(f);
+    a = x.getInverseUnsafe().multiplyMatrix(f);
 
     /*
      * Menentukan nilai interpolasi bicubic untuk titik p

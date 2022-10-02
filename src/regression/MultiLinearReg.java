@@ -18,6 +18,7 @@ public class MultiLinearReg {
      * Melakukan multiple linear regression untuk mencari estimasi nilai.
      * Menggunakan fungsi getNEE untuk mengubah data menjadi normal estimation
      * dan gauss jordan untuk mendapatkan solusinya.
+     * 
      * @param data
      * @param scanner
      * @param writeChoice
@@ -53,6 +54,7 @@ public class MultiLinearReg {
         } else {
             System.out.println("\nHasil Regresi Linier:");
             System.out.print(result);
+            System.out.println();
         }
 
         String choice;

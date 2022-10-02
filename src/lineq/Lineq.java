@@ -2,7 +2,6 @@ package lineq;
 
 import java.util.HashMap;
 import java.lang.Math;
-import java.nio.file.attribute.FileOwnerAttributeView;
 
 import io.FileTulis;
 import matrix.Matrix;
@@ -11,6 +10,12 @@ import matrix.expression.ExpressionList;
 public class Lineq {
   private static final double EPSILON_IMPRECISION = 0.00001;
 
+  /**
+   * Substitusi balik REF / RREF hasil Gauss / Gauss Jordan.
+   * Hashmap[1] mengandung expr list untuk x1, hashmap[2] x2, dst.
+   * @param m
+   * @return
+   */
   private HashMap<Integer, ExpressionList> getSolution(Matrix m) {
     HashMap<Integer, ExpressionList> columnToExpression = new HashMap<Integer, ExpressionList>();
 
@@ -67,18 +72,24 @@ public class Lineq {
     /**
      * Last run, see if any variables are still null. if so, set as parametric
      */
-      for (int kolom = 0; kolom < colLength; kolom++) {
-        if (columnToExpression.get(kolom) == null) {
-          ExpressionList newList = new ExpressionList();
-          newList.addExpression(false, 1, generateParametricVariable(cntParam));
-          cntParam++;
-          columnToExpression.put(kolom, newList);
-        }
+    for (int kolom = 0; kolom < colLength; kolom++) {
+      if (columnToExpression.get(kolom) == null) {
+        ExpressionList newList = new ExpressionList();
+        newList.addExpression(false, 1, generateParametricVariable(cntParam));
+        cntParam++;
+        columnToExpression.put(kolom, newList);
       }
+    }
 
     return columnToExpression;
   }
 
+  /**
+   * Mendisplay solution dari hasil substitusi dengan mengiterasi hashmap
+   * @param expression
+   * @param writeChoice
+   * @param fileWriter
+   */
   public void displaySolution(
       HashMap<Integer, ExpressionList> expression,
       int writeChoice,
@@ -102,6 +113,11 @@ public class Lineq {
     }
   }
 
+  /**
+   * Generator variabel parametrik
+   * @param charCount
+   * @return
+   */
   public String generateParametricVariable(int charCount) {
     int upperBound = (int) 'z';
     int lowerBound = (int) 'a';
@@ -117,11 +133,12 @@ public class Lineq {
     return varName;
   }
 
+
   public HashMap<Integer, ExpressionList> Gauss(Matrix m) {
     m.toREF();
-    m.writeMatrix();
     return getSolution(m);
   }
+
 
   public HashMap<Integer, ExpressionList> GaussJordan(Matrix m) {
     m.toRREF();
@@ -131,7 +148,7 @@ public class Lineq {
   public void doCramer(Matrix m, int writeChoice, FileTulis fileWriter) {
     Matrix matrixA = m.getMatrixAFromAugmented();
     Matrix matrixB = m.getMatrixBFromAugmented();
-    double determinantA = matrixA.getDetWithCofactor();
+    double determinantA = matrixA.getDeterminantWithTriangle(true);
 
     String output = "";
     if (Math.abs(determinantA) < m.EPSILON_IMPRECISION) {
@@ -141,7 +158,7 @@ public class Lineq {
     } else {
       for (int col = 0; col < matrixA.getColLength(); col++) {
         Matrix substitute = matrixA.substituteCramer(matrixB, col);
-        double determinantX = substitute.getDetWithCofactor();
+        double determinantX = substitute.getDeterminantWithTriangle(true);
         output += String.format("x%d : %.2f\n", col, determinantX / determinantA);
       }
     }
@@ -155,7 +172,6 @@ public class Lineq {
     Matrix inverse = m.getMatrixAFromAugmented().getInverse();
     Matrix matrixB = m.getMatrixBFromAugmented();
     String output = "";
-    inverse.getMatrixAFromAugmented().writeMatrix();
     if (inverse.getValidity()) {
       Matrix solution = inverse.multiplyMatrix(matrixB);
       for (int baris = 0; baris < solution.getRowLength(); baris++) {
@@ -163,6 +179,21 @@ public class Lineq {
       }
     } else {
       output += ("Matrix tidak punya invers (singular) sehingga tidak bisa diperoleh solusinya lewat metode invers.\n");
+    }
+    System.out.print(output);
+    if (writeChoice == 1) {
+      fileWriter.writeFile(output);
+    }
+  }
+
+  public void doInverseUnsafe(Matrix m, int writeChoice, FileTulis fileWriter) {
+    Matrix inverse = m.getMatrixAFromAugmented().getInverseUnsafe();
+    Matrix matrixB = m.getMatrixBFromAugmented();
+    String output = "";
+    inverse.getMatrixAFromAugmented().writeMatrix(2, null);
+    Matrix solution = inverse.multiplyMatrix(matrixB);
+    for (int baris = 0; baris < solution.getRowLength(); baris++) {
+      output += String.format("x%d : %.2f\n", baris, solution.getMatrixElement(baris, 0));
     }
     System.out.print(output);
     if (writeChoice == 1) {
