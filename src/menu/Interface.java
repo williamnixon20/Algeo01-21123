@@ -299,7 +299,13 @@ public class Interface {
 
                     break;
                 case 5:
-                    System.out.println("Rasakan sendiri dahsyatnya magnifikasi gambar dengan algoritma kami.\nSilakan masukkan nama file gambar di /test/bonus/images-in: ");
+                    System.out.println(
+                            "Rasakan sendiri dahsyatnya magnifikasi gambar dengan algoritma kami.");
+                    System.out.println("====!!====");
+                    System.out.println(
+                            "File yang diterima hanya .jpg atau .png.\nDisarankan dalam .jpg.\nJika .png memiliki background transparant, background akan berubah menjadi putih.");
+                    System.out.println("====!!====");
+                    System.out.print("Silakan masukkan nama file gambar di /test/bonus/images-in (Ex. anya.jpg): ");
                     String fileName = scanner.next();
                     ScaleImage scaleImg = new ScaleImage();
                     scaleImg.scaleImage(fileName);
