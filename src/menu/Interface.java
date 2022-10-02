@@ -139,7 +139,7 @@ public class Interface {
             int menuChoice = this.mainMenu();
             int writeChoice = 2;
 
-            if (menuChoice < 8 && menuChoice != 8) {
+            if (menuChoice < 8 && menuChoice != 8 && menuChoice != 5) {
                 writeChoice = this.writeMenu();
             }
 
@@ -311,12 +311,12 @@ public class Interface {
                     break;
                 case 5:
                     System.out.println(
-                            "Rasakan sendiri dahsyatnya magnifikasi gambar dengan algoritma kami.");
+                            "Rasakan sendiri dahsyatnya perbesaran citra dengan algoritma kami.");
                     System.out.println("====!!====");
                     System.out.println(
-                            "File yang diterima hanya .jpg atau .png.\nDisarankan dalam .jpg.\nJika .png memiliki background transparant, background akan berubah menjadi putih.");
+                            "Format citra yang diterima hanya .jpg atau .png.\nDisarankan dalam .jpg.\nJika .png memiliki latar transparan, latar akan berubah menjadi putih.");
                     System.out.println("====!!====");
-                    System.out.print("Silakan masukkan nama file gambar di /test/bonus/images-in (Ex. anya.jpg): ");
+                    System.out.print("Silakan masukkan nama citra di /test/bonus/images-in (Ex. anya.jpg): ");
                     String fileName = scanner.next();
                     ScaleImage scaleImg = new ScaleImage();
                     scaleImg.scaleImage(fileName);
