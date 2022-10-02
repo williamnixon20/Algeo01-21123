@@ -8,13 +8,14 @@ import matrix.Matrix;
 import matrix.expression.ExpressionList;
 
 public class Lineq {
-  private static final double EPSILON_IMPRECISION = 0.00001;
+  private static final double EPSILON_IMPRECISION = 0.00001; // impresisi epsilon
 
   /**
    * Substitusi balik REF / RREF hasil Gauss / Gauss Jordan.
    * Hashmap[1] mengandung expr list untuk x1, hashmap[2] x2, dst.
-   * @param m
-   * @return
+   * 
+   * @param m matriks augmented dari SPL
+   * @return solusi dari SPL
    */
   private HashMap<Integer, ExpressionList> getSolution(Matrix m) {
     HashMap<Integer, ExpressionList> columnToExpression = new HashMap<Integer, ExpressionList>();
@@ -86,9 +87,11 @@ public class Lineq {
 
   /**
    * Mendisplay solution dari hasil substitusi dengan mengiterasi hashmap
-   * @param expression
-   * @param writeChoice
-   * @param fileWriter
+   * 
+   * @param expression  solusi dari SPL
+   * @param writeChoice Bentuk output. 1 untuk output pada CLI dan 2 untuk
+   *                    menuliskan output pada FILE
+   * @param fileWriter  FileTulis untuk menuliskan output pada FILE
    */
   public void displaySolution(
       HashMap<Integer, ExpressionList> expression,
@@ -115,6 +118,7 @@ public class Lineq {
 
   /**
    * Generator variabel parametrik
+   * 
    * @param charCount
    * @return
    */
@@ -133,13 +137,23 @@ public class Lineq {
     return varName;
   }
 
-
+  /**
+   * Mendapatkan solusi dari SPL dengan metode Gauss
+   * 
+   * @param m matriks augmented dari SPL
+   * @return solusi SPL
+   */
   public HashMap<Integer, ExpressionList> Gauss(Matrix m) {
     m.toREF();
     return getSolution(m);
   }
 
-
+  /**
+   * Mendapatkan solusi dari SPL dengan metode Gauss-Jordan
+   * 
+   * @param m matriks augmented dari SPL
+   * @return solusi SPL
+   */
   public HashMap<Integer, ExpressionList> GaussJordan(Matrix m) {
     m.toRREF();
     return getSolution(m);

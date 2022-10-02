@@ -210,11 +210,12 @@ public class Interface {
                     switch (inputChoice) {
                         case 1:
                             int varCount, sampleCount;
-                            System.out.print("Masukkan banyak variabel: "); // variabel x
+                            System.out.print("Masukkan banyak variabel (xk): "); // variabel x
                             varCount = scanner.nextInt();
                             System.out.print("Masukkan banyak sample: ");
                             sampleCount = scanner.nextInt();
                             data = new Matrix(sampleCount, varCount + 1, true, scanner);
+                            System.out.println("\nInput data dalam bentuk matriks augmented [xk | y]");
                             data.readMatrix();
                             mlr.doMultiLinearReg(data, scanner, writeChoice, this.fileWriter);
                             break;
@@ -224,10 +225,10 @@ public class Interface {
                                 mlr.doMultiLinearReg(data, scanner, writeChoice, this.fileWriter);
                             } else {
                                 System.out.println("File tidak ditemukan.");
-                                break;
                             }
                             break;
                         default:
+                            System.out.println("Opsi tidak tersedia.");
                             break;
                     }
                     break;
