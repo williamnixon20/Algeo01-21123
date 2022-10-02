@@ -3,6 +3,7 @@ package menu;
 import java.io.IOException;
 
 import java.util.Scanner;
+import java.util.ArrayList;
 
 import bonus.ScaleImage;
 import interpolation.Bicubic;
@@ -61,7 +62,7 @@ public class Interface {
         System.out.println("1. Adjoin");
         System.out.println("2. OBE");
         System.out.println("3. OBE (UNSAFE, determinant menuju 0, matriks TIDAK SINGULAR");
-        System.out.println("3. Keluar\n==============");
+        System.out.println("4. Keluar\n==============");
 
         System.out.print("Masukan: ");
 
@@ -155,8 +156,12 @@ public class Interface {
             switch (menuChoice) {
                 case 1:
                     int splChoice = this.splMenu();
-                    if (splChoice == 6)
+                    if (splChoice == 6) {
                         break;
+                    } else if (splChoice > 6) {
+                        System.out.println("Opsi tidak tersedia.");
+                        break;
+                    }
                     Matrix m;
                     int inputChoice2 = inputChoiceMenu();
                     if (inputChoice2 == 1) {
@@ -166,7 +171,7 @@ public class Interface {
                         int col2 = this.scanner.nextShort();
                         m = new Matrix(row2, col2, true, this.scanner);
                         m.readMatrix();
-                    } else {
+                    } else if (inputChoice2 == 2) {
                         if (fileReader.setFileName(scanner)) {
                             m = fileReader.readMatrix();
                             if (m.getValidity() == false) {
@@ -176,6 +181,11 @@ public class Interface {
                             System.out.println("File tidak ditemukan.");
                             break;
                         }
+                    } else if (inputChoice2 == 3) {
+                        break;
+                    } else {
+                        System.out.println("Opsi tidak tersedia.");
+                        break;
                     }
                     Lineq leq = new Lineq();
                     System.out.println();
@@ -212,15 +222,20 @@ public class Interface {
                             data = new Matrix(sampleCount, varCount + 1, true, scanner);
                             System.out.println("\nInput data dalam bentuk matriks augmented [xk | y]");
                             data.readMatrix();
-                            mlr.doMultiLinearReg(data, scanner, writeChoice, this.fileWriter);
+                            mlr.doMultiLinearRegKey(data, scanner, writeChoice, fileWriter);
                             break;
                         case 2:
                             if (fileReader.setFileName(scanner)) {
-                                data = fileReader.readMatrix();
-                                mlr.doMultiLinearReg(data, scanner, writeChoice, this.fileWriter);
+                                ArrayList<Matrix> mlrData = fileReader.readMLRFromFile();
+                                if (mlrData.get(0).getValidity() && mlrData.get(1).getValidity()) {
+                                    mlr.doMultiLinearRegFile(mlrData.get(0), mlrData.get(1), scanner, writeChoice,
+                                            this.fileWriter);
+                                }
                             } else {
                                 System.out.println("File tidak ditemukan.");
                             }
+                            break;
+                        case 3:
                             break;
                         default:
                             System.out.println("Opsi tidak tersedia.");
@@ -324,6 +339,13 @@ public class Interface {
                     break;
                 case 6:
                     int inversChoice = inversMenu();
+                    if (inversChoice == 4) {
+                        break;
+                    } else if (inversChoice > 4) {
+                        System.out.println("Opsi tidak tersedia.");
+                        break;
+                    }
+
                     inputChoice = inputChoiceMenu();
                     keluar = false;
                     Matrix m2 = new Matrix(0, 0, false, this.scanner);
@@ -366,6 +388,12 @@ public class Interface {
                     break;
                 case 7:
                     int detChoice = detMenu();
+                    if (detChoice == 4) {
+                        break;
+                    } else if (detChoice > 4) {
+                        System.out.println("Opsi tidak tersedia.");
+                        break;
+                    }
                     inputChoice = inputChoiceMenu();
                     keluar = false;
                     Matrix m3 = new Matrix(0, 0, false, this.scanner);

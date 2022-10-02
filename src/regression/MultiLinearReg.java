@@ -12,13 +12,13 @@ import lineq.Lineq;
  * Kelas untuk multi variabel linear regression.
  */
 public class MultiLinearReg {
-
     /**
-     * Driver multi linear regresion.
-     * Melakukan multiple linear regression untuk mencari estimasi nilai, menerima
-     * input banyak sampel yang akan diestimasi dan nilai-nilai yang akan diestimasi
-     * Menggunakan fungsi getNEE untuk mengubah data menjadi normal estimation
-     * dan gauss jordan untuk mendapatkan solusinya.
+     * Melakukan multiple linear regression untuk mencari estimasi nilai dari
+     * keyboard, menerima input banyak sampel yang akan diestimasi dan nilai-nilai
+     * yang akan diestimasi.
+     * 
+     * Menggunakan fungsi getEstimatedValue untuk mencari estimasi nilai dari suatu
+     * data
      * 
      * @param data        Data yang akan diregresi dalam bentuk matriks augmented [A
      *                    | b] dengan A merupakan nilai-nilai xk dan b merupakan
@@ -28,12 +28,97 @@ public class MultiLinearReg {
      *                    menuliskan output pada FILE
      * @param fileWriter  FileTulis untuk menuliskan output pada FILE
      */
-    public void doMultiLinearReg(Matrix data, Scanner scanner, int writeChoice, FileTulis fileWriter) {
+    public void doMultiLinearRegKey(Matrix data, Scanner scanner, int writeChoice, FileTulis fileWriter) {
+        HashMap<Integer, ExpressionList> solution = getSolution(data, scanner);
+        writeRegEquation(writeChoice, fileWriter, solution);
+        String choice;
+        System.out.print("\nApakah Anda ingin melakukan estimasi nilai? [Y/N]: ");
+        choice = scanner.next();
+        while (!choice.toLowerCase().equals("y") && !choice.toLowerCase().equals("n")) {
+            System.out.println("Masukkan tidak valid.");
+            System.out.print("\nApakah Anda ingin melakukan estimasi nilai? [Y/N]: ");
+            choice = scanner.next();
+        }
+
+        if (choice.toLowerCase().equals("y")) {
+            double[] refData = new double[data.getColLength() - 1];
+            System.out.print("Masukkan jumlah sampel yang ingin diestimasi: ");
+            int sample = scanner.nextInt();
+
+            for (int count = 0; count < sample; count++) {
+                System.out.printf("\nSampel ke-%d \n\n", count + 1);
+                for (int i = 0; i < refData.length; i++) {
+                    System.out.printf("Masukkan x%d: ", i + 1);
+                    refData[i] = scanner.nextDouble();
+                }
+                double estimatedValue = getEstimatedValue(solution, refData, scanner);
+                writeEstimate(writeChoice, fileWriter, refData, estimatedValue);
+            }
+
+        }
+    }
+
+    /**
+     * Melakukan multiple linear regression untuk mencari estimasi nilai dari data
+     * yang dibaca dari File
+     * 
+     * Menggunakan fungsi getEstimatedValue untuk mencari estimasi nilai dari suatu
+     * data
+     * 
+     * @param data        Data yang akan diregresi dalam bentuk matriks augmented [A
+     *                    | b] dengan A merupakan nilai-nilai xk dan b merupakan
+     *                    nilai y
+     * @param estimates   Data yang akan diestimasi nilainya. Data bisa lebih dari 1
+     * @param scanner     Scanner untuk matriks dan estimasi nilai
+     * @param writeChoice Bentuk output. 1 untuk output pada CLI dan 2 untuk
+     *                    menuliskan output pada FILE
+     * @param fileWriter  FileTulis untuk menuliskan output pada FILE
+     */
+    public void doMultiLinearRegFile(Matrix data, Matrix estimates, Scanner scanner, int writeChoice,
+            FileTulis fileWriter) {
+        HashMap<Integer, ExpressionList> solution = getSolution(data, scanner);
+        writeRegEquation(writeChoice, fileWriter, solution);
+        for (int i = 0; i < estimates.getRowLength(); i++) {
+            double[] refData = new double[estimates.getColLength()];
+            for (int j = 0; j < estimates.getColLength(); j++) {
+                refData[j] = estimates.getMatrixElement(i, j);
+            }
+            double estimatedValue = getEstimatedValue(solution, refData, scanner);
+            writeEstimate(writeChoice, fileWriter, refData, estimatedValue);
+        }
+    }
+
+    /**
+     * Mendapatkan solusi dari SPL Normal Estimated Equation untuk Regresi Linier
+     * Berganda. Menggunakan fungsi getNEE untuk mendapatkan Normal Estimated
+     * Equation
+     * 
+     * @param data    Data yang akan diregresi dalam bentuk matriks augmented [A
+     *                | b] dengan A merupakan nilai-nilai xk dan b merupakan
+     *                nilai y
+     * @param scanner Scanner untuk matriks
+     * @return Solusi dari SPL Normal Estimated Equation untuk Regresi Linier
+     *         Berganda
+     */
+    private HashMap<Integer, ExpressionList> getSolution(Matrix data, Scanner scanner) {
         Matrix NEE;
         HashMap<Integer, ExpressionList> solution;
         Lineq lineq = new Lineq();
         NEE = getNEE(data, scanner);
+
         solution = lineq.GaussJordan(NEE);
+        return solution;
+    }
+
+    /**
+     * Menuliskan persamaan regresi dari solusi yang telah diperoleh
+     * 
+     * @param writeChoice Bentuk output. 1 untuk output pada CLI dan 2 untuk
+     *                    menuliskan output pada FILE
+     * @param fileWriter  FileTulis untuk menuliskan output pada FILE
+     * @param solution    Solusi dari SPL Normal Estimated Equation
+     */
+    private void writeRegEquation(int writeChoice, FileTulis fileWriter, HashMap<Integer, ExpressionList> solution) {
 
         String result;
 
@@ -60,54 +145,40 @@ public class MultiLinearReg {
             System.out.print(result);
             System.out.println();
         }
+    }
 
-        String choice;
-        System.out.print("\nApakah Anda ingin melakukan estimasi nilai? [Y/N]: ");
-        choice = scanner.next();
-        while (!choice.toLowerCase().equals("y") && !choice.toLowerCase().equals("n")) {
-            System.out.println("Masukkan tidak valid.");
-            System.out.print("\nApakah Anda ingin melakukan estimasi nilai? [Y/N]: ");
-            choice = scanner.next();
-        }
+    /**
+     * Menuliskan nilai estimasi sesuai dengan format ke layar/file
+     * 
+     * @param writeChoice    Bentuk output. 1 untuk output pada CLI dan 2 untuk
+     *                       menuliskan output pada FILE
+     * @param fileWriter     FileTulis untuk menuliskan output pada FILE
+     * @param refData        Data (xk) yang diestimasi nilainya
+     * @param estimatedValue Estimasi nilai dari data tersebut
+     */
+    private void writeEstimate(int writeChoice, FileTulis fileWriter, double[] refData, double estimatedValue) {
+        if (writeChoice == 1) {
+            String temp = "Estimasi nilai ";
+            for (int i = 0; i < refData.length; i++) {
+                temp += String.format("x%d = %.2f", i + 1, refData[i]);
 
-        if (choice.toLowerCase().equals("y")) {
-            double[] refData = new double[data.getColLength() - 1];
-            System.out.print("Masukkan jumlah sampel yang ingin diestimasi: ");
-            int sample = scanner.nextInt();
-
-            for (int count = 0; count < sample; count++) {
-                System.out.printf("\nSampel ke-%d \n\n", count + 1);
-                for (int i = 0; i < refData.length; i++) {
-                    System.out.printf("Masukkan x%d: ", i + 1);
-                    refData[i] = scanner.nextDouble();
+                if (i != refData.length - 1) {
+                    temp += ", ";
                 }
-                double estimatedValue = getEstimatedValue(solution, refData, scanner);
-                if (writeChoice == 1) {
-                    String temp = "Estimasi nilai ";
-                    for (int i = 0; i < refData.length; i++) {
-                        temp += String.format("x%d = %.2f", i + 1, refData[i]);
-
-                        if (i != refData.length - 1) {
-                            temp += ", ";
-                        }
-                    }
-
-                    fileWriter.writeFile(temp);
-                    fileWriter.writeFile(String.format("f(xk) = %.4f\n", estimatedValue));
-                } else {
-                    System.out.print("\nEstimasi nilai ");
-                    for (int i = 0; i < refData.length; i++) {
-                        System.out.printf("x%d = %.2f", i + 1, refData[i]);
-
-                        if (i != refData.length - 1) {
-                            System.out.print(", ");
-                        }
-                    }
-                    System.out.printf("\nf(xk) = %.4f\n", estimatedValue);
-                }
-
             }
 
+            fileWriter.writeFile(temp);
+            fileWriter.writeFile(String.format("f(xk) = %.4f\n", estimatedValue));
+        } else {
+            System.out.print("\nEstimasi nilai ");
+            for (int i = 0; i < refData.length; i++) {
+                System.out.printf("x%d = %.2f", i + 1, refData[i]);
+
+                if (i != refData.length - 1) {
+                    System.out.print(", ");
+                }
+            }
+            System.out.printf("\nf(xk) = %.4f\n", estimatedValue);
         }
     }
 
