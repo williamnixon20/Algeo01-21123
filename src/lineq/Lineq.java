@@ -168,23 +168,6 @@ public class Lineq {
     }
   }
 
-  public void doCramerUnsafe(Matrix m, int writeChoice, FileTulis fileWriter) {
-    Matrix matrixA = m.getMatrixAFromAugmented();
-    Matrix matrixB = m.getMatrixBFromAugmented();
-    double determinantA = matrixA.getDeterminantWithTriangle(true);
-
-    String output = "";
-    for (int col = 0; col < matrixA.getColLength(); col++) {
-      Matrix substitute = matrixA.substituteCramer(matrixB, col);
-      double determinantX = substitute.getDeterminantWithTriangle(true);
-      output += String.format("x%d : %.2f\n", col+1, determinantX / determinantA);
-    }
-    System.out.print(output);
-    if (writeChoice == 1) {
-      fileWriter.writeFile(output);
-    }
-  }
-
   public void doInverse(Matrix m, int writeChoice, FileTulis fileWriter) {
     Matrix inverse = m.getMatrixAFromAugmented().getInverse();
     Matrix matrixB = m.getMatrixBFromAugmented();
