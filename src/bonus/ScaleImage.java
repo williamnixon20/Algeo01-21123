@@ -13,18 +13,16 @@ import matrix.Matrix;
 import point.Point;
 
 public class ScaleImage {
-  public Color c(BufferedImage img, int x, int y) {
+  private Color getColorRGB(BufferedImage img, int x, int y) {
     Color c = new Color(img.getRGB(x, y));
     int c_r = (int) Math.round((c.getRed()));
     int c_g = (int) Math.round((c.getGreen()));
     int c_b = (int) Math.round((c.getBlue()));
-    // int cSum = c_r + c_g + c_b;
-    Color cGray = new Color(c_r, c_g, c_b);
-    // Color cGray = new Color(c.getRed(), c.getGreen(), c.getBlue());
-    return cGray;
+    Color cRGB = new Color(c_r, c_g, c_b);
+    return cRGB;
   }
 
-  public Point getPoint(int x, int y) {
+  private Point getPoint(int x, int y) {
     if (x % 2 == 0) {
       if (y % 2 == 0)
         return new Point(0.75, 0.75);
@@ -84,7 +82,7 @@ public class ScaleImage {
      */
     for (int x = 0; x < 3; x++) {
       for (int y = 0; y < 3; y++) {
-        padImg.setRGB(x, y, c(img, 0, 0).getRGB());
+        padImg.setRGB(x, y, getColorRGB(img, 0, 0).getRGB());
       }
     }
 
@@ -93,7 +91,7 @@ public class ScaleImage {
      */
     for (int x = 0; x < 3; x++) {
       for (int y = padImg.getHeight() - 4; y < padImg.getHeight(); y++) {
-        padImg.setRGB(x, y, c(img, 0, img.getHeight() - 1).getRGB());
+        padImg.setRGB(x, y, getColorRGB(img, 0, img.getHeight() - 1).getRGB());
       }
     }
 
@@ -102,7 +100,7 @@ public class ScaleImage {
      */
     for (int x = padImg.getWidth() - 4; x < padImg.getWidth(); x++) {
       for (int y = 0; y < 3; y++) {
-        padImg.setRGB(x, y, c(img, img.getWidth() - 1, 0).getRGB());
+        padImg.setRGB(x, y, getColorRGB(img, img.getWidth() - 1, 0).getRGB());
       }
     }
 
@@ -111,7 +109,7 @@ public class ScaleImage {
      */
     for (int x = padImg.getWidth() - 4; x < padImg.getWidth(); x++) {
       for (int y = padImg.getHeight() - 4; y < padImg.getHeight(); y++) {
-        padImg.setRGB(x, y, c(img, img.getWidth() - 1, img.getHeight() - 1).getRGB());
+        padImg.setRGB(x, y, getColorRGB(img, img.getWidth() - 1, img.getHeight() - 1).getRGB());
       }
     }
 
@@ -120,7 +118,7 @@ public class ScaleImage {
      */
     for (int y = 1; y < img.getHeight() - 1; y++) {
       for (int x = 0; x < 3; x++) {
-        padImg.setRGB(x, y + 2, c(img, 0, y).getRGB());
+        padImg.setRGB(x, y + 2, getColorRGB(img, 0, y).getRGB());
       }
     }
 
@@ -129,7 +127,7 @@ public class ScaleImage {
      */
     for (int y = 1; y < img.getHeight() - 1; y++) {
       for (int x = padImg.getWidth() - 3; x < padImg.getWidth(); x++) {
-        padImg.setRGB(x, y + 2, c(img, img.getWidth() - 1, y).getRGB());
+        padImg.setRGB(x, y + 2, getColorRGB(img, img.getWidth() - 1, y).getRGB());
       }
     }
 
@@ -138,7 +136,7 @@ public class ScaleImage {
      */
     for (int x = 1; x < img.getWidth() - 1; x++) {
       for (int y = 0; y < 3; y++) {
-        padImg.setRGB(x + 2, y, c(img, x, 0).getRGB());
+        padImg.setRGB(x + 2, y, getColorRGB(img, x, 0).getRGB());
       }
     }
 
@@ -147,7 +145,7 @@ public class ScaleImage {
      */
     for (int x = 1; x < img.getWidth() - 1; x++) {
       for (int y = padImg.getHeight() - 3; y < padImg.getHeight(); y++) {
-        padImg.setRGB(x + 2, y, c(img, x, img.getHeight() - 1).getRGB());
+        padImg.setRGB(x + 2, y, getColorRGB(img, x, img.getHeight() - 1).getRGB());
       }
     }
 
@@ -156,7 +154,7 @@ public class ScaleImage {
      */
     for (int x = 1; x < img.getWidth() - 1; x++) {
       for (int y = 1; y < img.getHeight() - 1; y++) {
-        padImg.setRGB(x + 2, y + 2, c(img, x, y).getRGB());
+        padImg.setRGB(x + 2, y + 2, getColorRGB(img, x, y).getRGB());
       }
     }
 
