@@ -149,7 +149,7 @@ public class Interface {
                     String fileName = this.writeNameMenu();
                     this.fileWriter = new FileTulis(fileName);
                 } catch (Exception e) {
-                    writeChoice = 1;
+                    writeChoice = 2;
                 }
             }
 

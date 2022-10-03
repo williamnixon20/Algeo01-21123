@@ -1,0 +1,2 @@
+Determinan matriks 0 sehingga tidak dapat diperoleh solusinya lewat metode Cramer.
+
