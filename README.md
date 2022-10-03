@@ -25,3 +25,6 @@ Ok, be at root folder and do this.
 
 ### Having Trouble Running The Program?
 Mungkin bisa cek versi Java kalian, karena program dicompile menggunakan versi java terbaru (kami baru download dan belajar Java hehe). Atau mungkin jika lebih berpengalaman, kalian dapat mengcompile dan menjalankan programnya sendiri, berhubung source code telah tersedia.
+
+## Link Github
+https://github.com/williamnixon20/Algeo01-21123
