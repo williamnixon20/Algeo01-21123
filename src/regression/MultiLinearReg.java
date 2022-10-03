@@ -24,8 +24,7 @@ public class MultiLinearReg {
      *                    | b] dengan A merupakan nilai-nilai xk dan b merupakan
      *                    nilai y
      * @param scanner     Scanner untuk matriks dan estimasi nilai
-     * @param writeChoice Bentuk output. 1 untuk output pada CLI dan 2 untuk
-     *                    menuliskan output pada FILE
+     * @param writeChoice Bentuk output. 1 jika ingin ditulis pada FILE
      * @param fileWriter  FileTulis untuk menuliskan output pada FILE
      */
     public void doMultiLinearRegKey(Matrix data, Scanner scanner, int writeChoice, FileTulis fileWriter) {
@@ -70,8 +69,7 @@ public class MultiLinearReg {
      *                    nilai y
      * @param estimates   Data yang akan diestimasi nilainya. Data bisa lebih dari 1
      * @param scanner     Scanner untuk matriks dan estimasi nilai
-     * @param writeChoice Bentuk output. 1 untuk output pada CLI dan 2 untuk
-     *                    menuliskan output pada FILE
+     * @param writeChoice Bentuk output. 1 jika ingin ditulis pada FILE
      * @param fileWriter  FileTulis untuk menuliskan output pada FILE
      */
     public void doMultiLinearRegFile(Matrix data, Matrix estimates, Scanner scanner, int writeChoice,
@@ -113,8 +111,7 @@ public class MultiLinearReg {
     /**
      * Menuliskan persamaan regresi dari solusi yang telah diperoleh
      * 
-     * @param writeChoice Bentuk output. 1 untuk output pada CLI dan 2 untuk
-     *                    menuliskan output pada FILE
+     * @param writeChoice Bentuk output. 1 jika ingin ditulis pada FILE
      * @param fileWriter  FileTulis untuk menuliskan output pada FILE
      * @param solution    Solusi dari SPL Normal Estimated Equation
      */
@@ -150,8 +147,7 @@ public class MultiLinearReg {
     /**
      * Menuliskan nilai estimasi sesuai dengan format ke layar/file
      * 
-     * @param writeChoice    Bentuk output. 1 untuk output pada CLI dan 2 untuk
-     *                       menuliskan output pada FILE
+     * @param writeChoice    Bentuk output. 1 jika ingin ditulis pada File
      * @param fileWriter     FileTulis untuk menuliskan output pada FILE
      * @param refData        Data (xk) yang diestimasi nilainya
      * @param estimatedValue Estimasi nilai dari data tersebut

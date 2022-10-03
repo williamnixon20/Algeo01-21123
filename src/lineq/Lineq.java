@@ -89,8 +89,7 @@ public class Lineq {
    * Mendisplay solution dari hasil substitusi dengan mengiterasi hashmap
    * 
    * @param expression  solusi dari SPL
-   * @param writeChoice Bentuk output. 1 untuk output pada CLI dan 2 untuk
-   *                    menuliskan output pada FILE
+   * @param writeChoice Bentuk output. 1 jika ingin ditulis pada File
    * @param fileWriter  FileTulis untuk menuliskan output pada FILE
    */
   public void displaySolution(
