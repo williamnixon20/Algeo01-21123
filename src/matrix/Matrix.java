@@ -335,7 +335,7 @@ public class Matrix {
     for (int row = startRow - 1; row >= 0; row--) {
       int leadCoeff = getTrailingCoeffIdx(row);
 
-      if (leadCoeff < pivot.getCol()) {
+      if (leadCoeff > pivot.getCol()) {
         pivot.setRow(row);
         pivot.setCol(leadCoeff);
       }

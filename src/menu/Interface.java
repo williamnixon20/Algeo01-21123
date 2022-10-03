@@ -421,16 +421,28 @@ public class Interface {
                     }
                     if (keluar)
                         break;
+                    double det;
+                    double EPSILON_IMPRECISION = 0.00001;
                     String row = "Determinan matriks anda adalah: ";
                     switch (detChoice) {
                         case 1:
                             row += m3.getDetWithCofactor();
                             break;
                         case 2:
-                            row += m3.getDeterminantWithTriangle(true);
+                            det = m3.getDeterminantWithTriangle(true);
+                            // mencegah output -0.00 karena double point imprecission
+                            if (Math.abs(det) < EPSILON_IMPRECISION) {
+                                det = 0;
+                            }
+                            row += String.format("%.2f", det);
                             break;
                         case 3:
-                            row += m3.getDeterminantWithTriangle(false);
+                            det = m3.getDeterminantWithTriangle(false);
+                            // mencegah output -0.00 karena double point imprecission
+                            if (Math.abs(det) < EPSILON_IMPRECISION) {
+                                det = 0;
+                            }
+                            row += String.format("%.2f", det);
                             break;
                     }
                     System.out.println(row);
