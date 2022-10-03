@@ -138,12 +138,12 @@ public class MultiLinearReg {
             }
         }
 
+        System.out.println("\nHasil Regresi Linier:");
+        System.out.print(result);
+        System.out.println();
+
         if (writeChoice == 1) {
             fileWriter.writeFile(result + "\n");
-        } else {
-            System.out.println("\nHasil Regresi Linier:");
-            System.out.print(result);
-            System.out.println();
         }
     }
 
@@ -157,28 +157,23 @@ public class MultiLinearReg {
      * @param estimatedValue Estimasi nilai dari data tersebut
      */
     private void writeEstimate(int writeChoice, FileTulis fileWriter, double[] refData, double estimatedValue) {
-        if (writeChoice == 1) {
-            String temp = "Estimasi nilai ";
-            for (int i = 0; i < refData.length; i++) {
-                temp += String.format("x%d = %.2f", i + 1, refData[i]);
+        String temp = "Estimasi nilai ";
+        for (int i = 0; i < refData.length; i++) {
+            temp += String.format("x%d = %.2f", i + 1, refData[i]);
 
-                if (i != refData.length - 1) {
-                    temp += ", ";
-                }
+            if (i != refData.length - 1) {
+                temp += ", ";
             }
+        }
+
+        System.out.println();
+        System.out.println(temp);
+        System.out.printf("f(xk) = %.4f\n", estimatedValue);
+
+        if (writeChoice == 1) {
 
             fileWriter.writeFile(temp);
             fileWriter.writeFile(String.format("f(xk) = %.4f\n", estimatedValue));
-        } else {
-            System.out.print("\nEstimasi nilai ");
-            for (int i = 0; i < refData.length; i++) {
-                System.out.printf("x%d = %.2f", i + 1, refData[i]);
-
-                if (i != refData.length - 1) {
-                    System.out.print(", ");
-                }
-            }
-            System.out.printf("\nf(xk) = %.4f\n", estimatedValue);
         }
     }
 
