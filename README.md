@@ -1,5 +1,10 @@
+Halo! Ini adalah program yang dibuat untuk memenuhi tugas besar aljabar linier.
+Berikut merupakan beberapa cara yang dapat anda lakukan untuk menjalankan program.
+
 ## How to run
-Please be on root directory /TUBESALGEO !
+Please be on root directory /TUBESALGEO. Ini sangat penting, karena jika tidak di root directory
+maka pembacaan/penulisan file akan kacau.
+
 ### VSCODE
 1. Go to src/main/Main.java
 2. Click run (top right) if you are in VSCode. It's already setup so that it will automatically build (make files in bin) and run.
@@ -17,3 +22,6 @@ Ok, be at root folder and do this.
 
 ### I wanna execute jar as an executable
 1. Ok, be at root directory and type java -jar TubesAlgeo.jar
+
+### Having Trouble Running The Program?
+Mungkin bisa cek versi Java kalian, karena program dicompile menggunakan versi java terbaru (kami baru download dan belajar Java hehe). Atau mungkin jika lebih berpengalaman, kalian dapat mengcompile dan menjalankan programnya sendiri, berhubung source code telah tersedia.
